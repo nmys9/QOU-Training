@@ -14,6 +14,10 @@ public class MathEquation {
         this.rightVal=rightVal;
     }
 
+    public MathEquation(MathOperation mathOperation,String leftVal,String rightVal){
+        this(mathOperation,Double.parseDouble(leftVal),Double.parseDouble(rightVal));
+    }
+
     @Override
     public String toString() {
         return leftVal + " " + mathOperation.getSymbol() + " " + rightVal + " = " + result;
@@ -26,7 +30,7 @@ public class MathEquation {
             case MULTIPLY -> result=leftVal* rightVal;
             case DIVIDE -> {
                 if(rightVal ==0)result=0.0d;
-                result=leftVal-rightVal;
+                else result=leftVal/rightVal;
             }
             default -> result=0.0d;
         }
