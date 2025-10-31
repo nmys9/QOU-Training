@@ -1,15 +1,30 @@
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+import javax.swing.*;
+import java.util.Scanner;
+
 public class Main {
     public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
+        Scanner input=new Scanner(System.in);
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            System.out.println("i = " + i);
-        }
+        System.out.println("------- Library System -------");
+        System.out.println("Enter Name of Book : ");
+        String nameBook=input.nextLine();
+
+        System.out.println("Enter Number of Pages : ");
+        String numberOfPages=input.nextLine();
+
+        System.out.println("Enter Price Book : ");
+        String price=input.nextLine();
+
+        System.out.println("Enter Name of Author : ");
+        String nameAuthor=input.nextLine();
+
+        System.out.println("Enter Email of Author : ");
+        String email=input.nextLine();
+
+        Author author=new Author(nameAuthor,email);
+        Book book=new Book(nameBook, numberOfPages,price,author);
+
+        System.out.println("\n------ Book Details ------");
+        System.out.println(book);
     }
 }
