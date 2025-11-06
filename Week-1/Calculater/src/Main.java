@@ -7,7 +7,7 @@ public class Main {
             return;
         }else{
             char opCode=args[1].charAt(0);
-            MathOperation mathOperation=MathOperation.fromSymbol(opCode);
+            MathOperation mathOperation=MathOperation.fromتشSymbol(opCode);
             MathEquation equation=new MathEquation(mathOperation,args[0],args[2]);
             equation.execute();
             System.out.println(equation);

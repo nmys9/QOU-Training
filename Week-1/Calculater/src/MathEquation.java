@@ -20,7 +20,8 @@ public class MathEquation {
 
     @Override
     public String toString() {
-        return leftVal + " " + mathOperation.getSymbol() + " " + rightVal + " = " + result;
+        return String.format("%.2f %c %.2f = %.2f",leftVal,mathOperation.getSymbol(),rightVal,result);
+//        return leftVal + " " + mathOperation.getSymbol() + " " + rightVal + " = " + result;
     }
 
     public void execute(){
