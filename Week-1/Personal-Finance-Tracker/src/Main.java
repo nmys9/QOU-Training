@@ -1,6 +1,4 @@
-import java.lang.invoke.CallSite;
 import java.util.Scanner;
-import java.util.SimpleTimeZone;
 
 public class Main {
     public static void main(String[] args) {
@@ -15,13 +13,12 @@ public class Main {
 
         while (running){
             System.out.println("Please choose one of following options");
-            System.out.println("1 - add new transaction");
-            System.out.println("2 - view transactions");
-            System.out.println("3 - view remaining amount");
-            System.out.println("4 - Exit");
+            System.out.println("1 - Add new transaction");
+            System.out.println("2 - View transactions");
+            System.out.println("3 - View Transaction based on Category");
+            System.out.println("4 - View remaining amount");
+            System.out.println("5 - Exit");
 
-            String name,description,source,paymentMethod;
-            double amount;
             int choice=Integer.parseInt(input.nextLine());
 
             switch (choice){
@@ -29,39 +26,9 @@ public class Main {
                     System.out.println("What type of your transaction ?\n1 - Income\n2 - Expense");
                     int type=Integer.parseInt(input.nextLine());
                     if(type == 1){
-                        System.out.println("Enter category name:");
-                        name=input.nextLine();
-
-                        System.out.println("Enter category description:");
-                        description=input.nextLine();
-
-                        System.out.println("Amount of Income: ");
-                        amount=Double.parseDouble(input.nextLine());
-
-                        System.out.println("what of source: ");
-                        source=input.nextLine();
-
-                        Category category=new Category(name,description);
-                        Transaction transaction=new IncomeTransaction(amount,category,source);
-                        myBudget.addTransaction(transaction);
-
+                        myBudget.addIncomeTransactio();
                     }else if(type==2) {
-                        System.out.println("Enter category name:");
-                        name=input.nextLine();
-
-                        System.out.println("Enter category description:");
-                        description=input.nextLine();
-
-                        System.out.println("Amount of Expense: ");
-                        amount=Double.parseDouble(input.nextLine());
-
-                        System.out.println("Payment Method:");
-                        paymentMethod=input.nextLine();
-
-                        Category category=new Category(name,description);
-                        Transaction transaction=new ExpenseTransaction(amount,category,paymentMethod);
-                        myBudget.addTransaction(transaction);
-
+                        myBudget.addExpenseTransaction();
                     }else {
                         System.out.println("Please Enter number 1 or 2");
                     }
@@ -72,24 +39,15 @@ public class Main {
                     System.out.println("2 - View Expense Transaction");
                     System.out.println("3 - View Income Transaction");
                     choice=Integer.parseInt(input.nextLine());
-                    switch (choice){
-                        case 1:
-                            myBudget.displayTransactions();
-                            break;
-                        case 2:
-                            myBudget.displayExpenseTransactions();
-                            break;
-                        case 3:
-                            myBudget.displayIncomeTransactions();
-                            break;
-                        default:
-                            System.out.println("Please enter number between 1 - 3");
-                    }
+                    myBudget.displayTransactionsByType(choice);
                     break;
                 case 3:
-                    System.out.println(myBudget.getTotalAmount());
+                    myBudget.viewCategories();
                     break;
                 case 4:
+                    System.out.println("Total Amount: "+myBudget.getTotalAmount());
+                    break;
+                case 5:
                     running=false;
                     break;
                 default:

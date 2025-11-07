@@ -18,7 +18,7 @@ public class IncomeTransaction extends Transaction{
 
     @Override
     public String toString() {
-        return String.format("----- Transaction Details ----- \nType: Income \nSource: %s \n%s ",
+        return String.format("----- Transaction Details ----- \nType: Income \nSource: %s \n%s",
                 this.source,super.toString());
     }
 }

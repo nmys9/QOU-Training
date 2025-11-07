@@ -19,7 +19,7 @@ public class ExpenseTransaction extends Transaction{
 
     @Override
     public String toString() {
-        return String.format("----- Transaction Details -----\nType: Expense \nPayment Method: %s \n%s ",
+        return String.format("----- Transaction Details -----\nType: Expense \nPayment Method: %s \n%s",
                 this.paymentMethod,super.toString());
 
     }
