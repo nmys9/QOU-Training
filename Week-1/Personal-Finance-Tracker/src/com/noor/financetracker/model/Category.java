@@ -1,3 +1,5 @@
+package com.noor.financetracker.model;
+
 import java.util.Objects;
 
 public class Category {
@@ -48,6 +50,6 @@ public class Category {
 
     @Override
     public String toString() {
-        return String.format("Category is %s ( %s )",this.name,this.description);
+        return String.format("com.noor.financetracker.model.Category is %s ( %s )",this.name,this.description);
     }
 }

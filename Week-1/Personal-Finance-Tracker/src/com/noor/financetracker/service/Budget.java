@@ -1,3 +1,6 @@
+package com.noor.financetracker.service;
+import com.noor.financetracker.model.*;
+
 import java.util.*;
 
 public class Budget {
@@ -7,9 +10,9 @@ public class Budget {
     private static Scanner input=new Scanner(System.in);
 
 
-    Budget(){}
+    public Budget(){}
 
-    Budget(double totalAmount){
+    public Budget(double totalAmount){
         this.totalAmount=totalAmount;
         this.transactions=new HashSet<>();
         this.categories=new HashMap<>();
@@ -44,15 +47,23 @@ public class Budget {
         System.out.println("Enter category description:");
         String description=input.nextLine();
 
-        System.out.println("Amount :");
-        double amount=Double.parseDouble(input.nextLine());
-
+        double amount;
+        while (true){
+            try{
+                System.out.println("Amount :");
+                amount=Double.parseDouble(input.nextLine());
+                break;
+            }catch (NumberFormatException e){
+                System.err.println("Please Enter Number for Amount!!");
+                continue;
+            }
+        }
         System.out.println("what of source: ");
         String source=input.nextLine();
 
         Category category=getOrCreateCategory(name,description);
         transactions.add(new IncomeTransaction(amount, category, source));
-        System.out.println("Add Transaction Successfully");
+        System.out.println("Add com.noor.financetracker.model.Transaction Successfully");
 
     }
 
@@ -64,15 +75,28 @@ public class Budget {
         System.out.println("Enter category description:");
         String description=input.nextLine();
 
-        System.out.println("Amount :");
-        double amount=Double.parseDouble(input.nextLine());
-
+        double amount;
+        while (true){
+            try{
+                System.out.println("Amount :");
+                amount=Double.parseDouble(input.nextLine());
+                if(amount> totalAmount){
+                    System.out.println("The amount is insufficient");
+                    continue;
+                }
+                break;
+            }catch (NumberFormatException e){
+                System.err.println("Please Enter Number for Amount!!");
+                continue;
+            }
+        }
         System.out.println("Payment Method:");
         String paymentMethod=input.nextLine();
 
         Category category=getOrCreateCategory(name,description);
         transactions.add(new ExpenseTransaction(amount, category, paymentMethod));
-        System.out.println("Add Transaction Successfully");
+        System.out.println("Add com.noor.financetracker.model.Transaction Successfully");
+
     }
 
     public double calcTotalAmount(){
@@ -128,7 +152,7 @@ public class Budget {
 
     public void viewTransactionBasedOnCategory(){
         double total=0.0d;
-        System.out.println("Please Enter ID for Category you want to Transaction view :");
+        System.out.println("Please Enter ID for com.noor.financetracker.model.Category you want to com.noor.financetracker.model.Transaction view :");
         int categoryID=Integer.parseInt(input.nextLine());
         if(categories.containsKey(categoryID)){
             for(Transaction transaction: transactions){

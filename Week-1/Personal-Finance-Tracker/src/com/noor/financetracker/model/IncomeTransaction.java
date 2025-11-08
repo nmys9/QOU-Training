@@ -1,9 +1,11 @@
+package com.noor.financetracker.model;
+
 public class IncomeTransaction extends Transaction{
 
     private String source;
 
-    IncomeTransaction(){}
-    IncomeTransaction(double amount,Category category,String source){
+    public IncomeTransaction(){}
+    public IncomeTransaction(double amount, Category category, String source){
         super(amount,category);
         this.source=source;
     }
@@ -18,7 +20,7 @@ public class IncomeTransaction extends Transaction{
 
     @Override
     public String toString() {
-        return String.format("----- Transaction Details ----- \nType: Income \nSource: %s \n%s",
+        return String.format("----- com.noor.financetracker.model.Transaction Details ----- \nType: Income \nSource: %s \n%s",
                 this.source,super.toString());
     }
 }

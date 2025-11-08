@@ -1,10 +1,12 @@
+package com.noor.financetracker.model;
+
 public class ExpenseTransaction extends Transaction{
 
     private String paymentMethod;
 
-    ExpenseTransaction(){}
+    public ExpenseTransaction(){}
 
-    ExpenseTransaction(double amount,Category category,String paymentMethod){
+    public ExpenseTransaction(double amount, Category category, String paymentMethod){
         super(amount,category);
         this.paymentMethod=paymentMethod;
     }
@@ -19,7 +21,7 @@ public class ExpenseTransaction extends Transaction{
 
     @Override
     public String toString() {
-        return String.format("----- Transaction Details -----\nType: Expense \nPayment Method: %s \n%s",
+        return String.format("----- com.noor.financetracker.model.Transaction Details -----\nType: Expense \nPayment Method: %s \n%s",
                 this.paymentMethod,super.toString());
 
     }

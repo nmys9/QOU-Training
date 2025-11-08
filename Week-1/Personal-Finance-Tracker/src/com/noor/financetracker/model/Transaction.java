@@ -1,7 +1,7 @@
+package com.noor.financetracker.model;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.Scanner;
 
 public class Transaction {
     private double amount;
