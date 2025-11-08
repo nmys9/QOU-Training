@@ -43,6 +43,7 @@ public class Main {
                     break;
                 case 3:
                     myBudget.viewCategories();
+                    myBudget.viewTransactionBasedOnCategory();
                     break;
                 case 4:
                     System.out.println("Total Amount: "+myBudget.getTotalAmount());

@@ -21,7 +21,6 @@ public class Transaction {
         DateTimeFormatter formatter=DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
         return dateTime.format(formatter);
     }
-
     public double getAmount() {return amount;}
     public Category getCategory() {return category;}
     public void setCategory(Category category) {this.category = category;}
