@@ -1,7 +1,7 @@
 public enum MathOperation {
     ADD('+'),
     SUBTRACT('-'),
-    MULTIPLY('*'),
+    MULTIPLY('x'),
     DIVIDE('/');
 
     private char symbol;

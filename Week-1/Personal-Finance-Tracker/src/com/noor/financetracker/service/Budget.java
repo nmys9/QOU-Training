@@ -63,7 +63,7 @@ public class Budget {
 
         Category category=getOrCreateCategory(name,description);
         transactions.add(new IncomeTransaction(amount, category, source));
-        System.out.println("Add com.noor.financetracker.model.Transaction Successfully");
+        System.out.println("Add Transaction Successfully");
 
     }
 
@@ -95,7 +95,7 @@ public class Budget {
 
         Category category=getOrCreateCategory(name,description);
         transactions.add(new ExpenseTransaction(amount, category, paymentMethod));
-        System.out.println("Add com.noor.financetracker.model.Transaction Successfully");
+        System.out.println("Add Transaction Successfully");
 
     }
 
@@ -152,7 +152,7 @@ public class Budget {
 
     public void viewTransactionBasedOnCategory(){
         double total=0.0d;
-        System.out.println("Please Enter ID for com.noor.financetracker.model.Category you want to com.noor.financetracker.model.Transaction view :");
+        System.out.println("Please Enter ID for Category you want to Transaction view :");
         int categoryID=Integer.parseInt(input.nextLine());
         if(categories.containsKey(categoryID)){
             for(Transaction transaction: transactions){

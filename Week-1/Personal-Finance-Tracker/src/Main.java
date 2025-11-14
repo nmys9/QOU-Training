@@ -16,7 +16,7 @@ public class Main {
             System.out.println("Please choose one of following options");
             System.out.println("1 - Add new transaction");
             System.out.println("2 - View transactions");
-            System.out.println("3 - View com.noor.financetracker.model.Transaction based on com.noor.financetracker.model.Category");
+            System.out.println("3 - View Transaction based on Category");
             System.out.println("4 - View remaining amount");
             System.out.println("5 - Exit");
 
@@ -37,8 +37,8 @@ public class Main {
                 case 2:
                     System.out.println("What do you want to show?");
                     System.out.println("1 - View All Transactions");
-                    System.out.println("2 - View Expense com.noor.financetracker.model.Transaction");
-                    System.out.println("3 - View Income com.noor.financetracker.model.Transaction");
+                    System.out.println("2 - View Expense Transaction");
+                    System.out.println("3 - View Income Transaction");
                     choice=Integer.parseInt(input.nextLine());
                     myBudget.displayTransactionsByType(choice);
                     break;

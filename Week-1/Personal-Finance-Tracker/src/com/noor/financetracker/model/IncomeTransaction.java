@@ -20,7 +20,7 @@ public class IncomeTransaction extends Transaction{
 
     @Override
     public String toString() {
-        return String.format("----- com.noor.financetracker.model.Transaction Details ----- \nType: Income \nSource: %s \n%s",
+        return String.format("----- Transaction Details ----- \nType: Income \nSource: %s \n%s",
                 this.source,super.toString());
     }
 }
