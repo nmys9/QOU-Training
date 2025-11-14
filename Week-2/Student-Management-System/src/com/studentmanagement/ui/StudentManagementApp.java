@@ -118,14 +118,12 @@ public class StudentManagementApp {
         int courseID = inputHandler.readInt("Enter Course ID: ", id -> id > 0);
         double grade = inputHandler.readDouble("Enter new Grade (0-100): ", g -> g >= 0 && g <= 100);
 
-        try {
+        handleServiceAction(() -> {
             // Using updateGrade from EnrollmentService
             Enrollment updated = enrollmentService.updateGrade(studentID, courseID, grade);
             System.out.println("\n✅ Grade updated/assigned successfully!");
             System.out.printf("   New Grade for Enrollment ID %d: %.2f\n", updated.getEnrolID(), updated.getGrade());
-        } catch (NoSuchElementException e) {
-            System.out.println("\n❌ Operation failed: " + e.getMessage());
-        }
+        });
         inputHandler.pause();
     }
 
@@ -133,13 +131,26 @@ public class StudentManagementApp {
         System.out.println("\n--- 📊 Student GPA Calculation ---");
         int studentID = inputHandler.readInt("Enter Student ID to calculate GPA: ", id -> id > 0);
 
-        try {
+        handleServiceAction(()->{
             // Using getAvgForStudent from EnrollmentService
             double avg = enrollmentService.getAvgForStudent(studentID);
             System.out.printf("\n📊 Student ID %d Final Average (GPA): %.2f\n", studentID, avg);
-        } catch (NoSuchElementException e) {
-            System.out.println("\n❌ Cannot calculate average: " + e.getMessage());
-        }
+        });
         inputHandler.pause();
+    }
+
+    private void handleServiceAction(Runnable action) {
+        try {
+            action.run();
+        } catch (IllegalArgumentException e) {
+            System.out.println("\n❌ Invalid Input Error: " + e.getMessage());
+        } catch (NoSuchElementException e) {
+            System.out.println("\n❌ Resource Not Found Error: " + e.getMessage());
+        } catch (IllegalStateException e) {
+            System.out.println("\n❌ System Error: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("\n🛑 An unexpected error occurred: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }
