@@ -92,7 +92,10 @@ public class EnrollmentService {
                 .mapToDouble(e -> e.getGrade() * e.getCourse().getCreditHours())
                 .sum();
 
-        int totalCredit=getSumCreditHoursForStudent(studentID);
+        int totalCredit=gradedEnrollments.stream()
+                .mapToInt(e -> e.getCourse().getCreditHours())
+                .sum();
+
         if(totalCredit==0){
             throw new NoSuchElementException(
                     "Cannot calculate average for student ID " + studentID +
@@ -107,7 +110,6 @@ public class EnrollmentService {
     public int getSumCreditHoursForStudent(int studentID){
         List<Enrollment> enrollments=getEnrollmentsForStudent(studentID);
         return enrollments.stream()
-                .filter(e -> e.getGrade() != null)
                 .mapToInt(e -> e.getCourse().getCreditHours())
                 .sum();
     }
