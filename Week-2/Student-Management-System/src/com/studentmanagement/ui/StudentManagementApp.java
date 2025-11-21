@@ -47,7 +47,7 @@ public class StudentManagementApp {
 
         // 3. Initialize UI Controllers (Dependency Injection)
         this.manageStudent = new ManageStudent(inputHandler, studentService, enrollmentService);
-        this.manageDoctor = new ManageDoctor(inputHandler, doctorService);
+        this.manageDoctor = new ManageDoctor(inputHandler, doctorService,courseService);
         this.manageCourse = new ManageCourse(inputHandler, courseService, doctorService, enrollmentService);
 
         // 4. Seed initial data
