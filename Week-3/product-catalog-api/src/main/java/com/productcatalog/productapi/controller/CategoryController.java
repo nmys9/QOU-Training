@@ -32,8 +32,8 @@ public class CategoryController {
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Category>> findCategoryById(@PathVariable long id) {
+    @GetMapping(params = "id")
+    public ResponseEntity<ApiResponse<Category>> findCategoryById(@RequestParam long id) {
         Category category= categoryService.findCategoryById(id);
 
         ApiResponse<Category> response=ApiResponse.success(
@@ -45,7 +45,7 @@ public class CategoryController {
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
-    @GetMapping(params = "categoryName}")
+    @GetMapping(params = "categoryName")
     public ResponseEntity<ApiResponse<Category>> findGategoryByName(@RequestParam String categoryName){
         Category category= categoryService.findCategoryByName(categoryName);
 
@@ -72,8 +72,8 @@ public class CategoryController {
 
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<Category>> updateCategory(@PathVariable long id,@RequestBody Category updateCategory){
+    @PutMapping(params = "id")
+    public ResponseEntity<ApiResponse<Category>> updateCategory(@RequestParam long id, @Valid @RequestBody Category updateCategory){
         Category category= categoryService.updateCategory(id,updateCategory);
         ApiResponse<Category> response=ApiResponse.success(
                 HttpStatus.OK.value(),
@@ -84,8 +84,8 @@ public class CategoryController {
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCategory(@PathVariable long id){
+    @DeleteMapping( params = "id")
+    public ResponseEntity<Void> deleteCategory(@RequestParam long id){
         categoryService.deleteCategory(id);
 
         return ResponseEntity.noContent().build();

@@ -35,8 +35,8 @@ public class ProductController {
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Product>> findProductById(@PathVariable long id){
+    @GetMapping(params = "id")
+    public ResponseEntity<ApiResponse<Product>> findProductById(@RequestParam long id){
         Product product= productService.findProductById(id);
 
         ApiResponse<Product> response=ApiResponse.success(
@@ -83,8 +83,8 @@ public class ProductController {
         return new ResponseEntity<>(response,HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<Product>> updateProduct(@PathVariable long id,@RequestBody Product updateProduct){
+    @PutMapping(params = "id")
+    public ResponseEntity<ApiResponse<Product>> updateProduct(@RequestParam long id,@Valid @RequestBody Product updateProduct){
         Product product= productService.updateProduct(id,updateProduct);
 
         ApiResponse<Product> response=ApiResponse.success(
@@ -95,8 +95,8 @@ public class ProductController {
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void>  deleteProduct(@PathVariable long id){
+    @DeleteMapping(params = "id")
+    public ResponseEntity<Void>  deleteProduct(@RequestParam long id){
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();
     }

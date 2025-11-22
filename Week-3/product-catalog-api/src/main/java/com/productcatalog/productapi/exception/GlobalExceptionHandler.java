@@ -4,6 +4,7 @@ package com.productcatalog.productapi.exception;
 import com.productcatalog.productapi.dto.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -64,8 +65,19 @@ public class GlobalExceptionHandler {
                 "Input validation failed. Please review the details.",
                 errors
         );
-
         return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiResponse<Object>> handleMissingBody(HttpMessageNotReadableException ex) {
+        String customMessage = "Malformed JSON or missing request body. Please ensure your request body is correctly formatted and not empty.";
+
+        ApiResponse<Object> response = ApiResponse.error(
+                HttpStatus.BAD_REQUEST.value(), // 400
+                customMessage,
+                ex.getMessage()
+        );
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)
