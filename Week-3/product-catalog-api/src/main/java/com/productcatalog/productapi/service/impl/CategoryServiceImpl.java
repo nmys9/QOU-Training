@@ -37,7 +37,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public Category findCategoryByName(String categoryName) {
         return categoryRepository.findCategoryByName(categoryName).orElseThrow(
-                () -> new IllegalArgumentException("Category with name " + categoryName + " cannot be found")
+                () -> new NoSuchElementException("Category with name " + categoryName + " cannot be found")
         );
     }
 
