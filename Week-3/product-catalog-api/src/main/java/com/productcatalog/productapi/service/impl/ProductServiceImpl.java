@@ -40,7 +40,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product findProductById(long id) {
+    public Product findProductById(Long id) {
         return productRepository.findProductByID(id).orElseThrow(
                 () -> new NoSuchElementException("Product with ID: " + id + " cannot found"));
     }
@@ -52,7 +52,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> getProductsByCategoryId(long id) {
+    public List<Product> getProductsByCategoryId(Long id) {
         categoryService.findCategoryById(id);
         return productRepository.getProductsByCategoryId(id);
     }
@@ -68,7 +68,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product updateProduct(long id,Product updateProduct) {
+    public Product updateProduct(Long id,Product updateProduct) {
         findProductById(id);
         categoryService.findCategoryById(updateProduct.category().id());
         if(updateProduct.id() != id) {
@@ -80,7 +80,7 @@ public class ProductServiceImpl implements ProductService {
 
 
     @Override
-    public void deleteProduct(long id) {
+    public void deleteProduct(Long id) {
         findProductById(id);
         productRepository.deleteProduct(id);
     }

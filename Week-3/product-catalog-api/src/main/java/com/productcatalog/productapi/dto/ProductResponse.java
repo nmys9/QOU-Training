@@ -1,10 +1,10 @@
 package com.productcatalog.productapi.dto;
 
 public record ProductResponse(
-    long id,
+    Long id,
     String title,
     String description,
-    double price,
+    Double price,
     String categoryName
 ) {
 }

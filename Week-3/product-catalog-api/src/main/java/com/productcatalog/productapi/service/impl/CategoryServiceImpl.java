@@ -6,6 +6,8 @@ import com.productcatalog.productapi.model.Product;
 import com.productcatalog.productapi.repository.CategoryRepository;
 import com.productcatalog.productapi.repository.ProductRepository;
 import com.productcatalog.productapi.service.CategoryService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,10 +16,11 @@ import java.util.Optional;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
+
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
 
-    public CategoryServiceImpl(CategoryRepository categoryRepository,ProductRepository productRepository){
+    public CategoryServiceImpl(@Qualifier("category") CategoryRepository categoryRepository,ProductRepository productRepository){
         this.categoryRepository=categoryRepository;
         this.productRepository=productRepository;
     }

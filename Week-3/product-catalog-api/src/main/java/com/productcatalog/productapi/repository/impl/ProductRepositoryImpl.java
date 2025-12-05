@@ -14,11 +14,11 @@ public class ProductRepositoryImpl implements ProductRepository {
 
     @Override
     public List<Product> getAllProduct() {
-        return products;
+        return products.stream().toList();
     }
 
     @Override
-    public Optional<Product> findProductByID(long id) {
+    public Optional<Product> findProductByID(Long id) {
         return products.stream()
                 .filter(p -> p.id() == id)
                 .findFirst();
@@ -32,7 +32,7 @@ public class ProductRepositoryImpl implements ProductRepository {
     }
 
     @Override
-    public List<Product> getProductsByCategoryId(long id) {
+    public List<Product> getProductsByCategoryId(Long id) {
         return products.stream()
                 .filter(p -> p.category().id() == id)
                 .toList();
@@ -45,7 +45,7 @@ public class ProductRepositoryImpl implements ProductRepository {
     }
 
     @Override
-    public void updateProduct(long id, Product product) {
+    public void updateProduct(Long id, Product product) {
         int index=-1;
         for(int i=0;i<products.size();i++){
             if(products.get(i).id() == id){
@@ -60,7 +60,7 @@ public class ProductRepositoryImpl implements ProductRepository {
     }
 
     @Override
-    public void deleteProduct(long id) {
+    public void deleteProduct(Long id) {
         products.removeIf(p -> p.id() == id);
     }
 }

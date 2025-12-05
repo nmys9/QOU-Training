@@ -33,7 +33,7 @@ public class CategoryController {
     }
 
     @GetMapping(params = "id")
-    public ResponseEntity<ApiResponse<Category>> findCategoryById(@RequestParam long id) {
+    public ResponseEntity<ApiResponse<Category>> findCategoryById(@RequestParam Long id) {
         Category category= categoryService.findCategoryById(id);
 
         ApiResponse<Category> response=ApiResponse.success(
@@ -73,7 +73,7 @@ public class CategoryController {
     }
 
     @PutMapping(params = "id")
-    public ResponseEntity<ApiResponse<Category>> updateCategory(@RequestParam long id, @Valid @RequestBody Category updateCategory){
+    public ResponseEntity<ApiResponse<Category>> updateCategory(@RequestParam Long id, @Valid @RequestBody Category updateCategory){
         Category category= categoryService.updateCategory(id,updateCategory);
         ApiResponse<Category> response=ApiResponse.success(
                 HttpStatus.OK.value(),
@@ -85,7 +85,7 @@ public class CategoryController {
     }
 
     @DeleteMapping( params = "id")
-    public ResponseEntity<Void> deleteCategory(@RequestParam long id){
+    public ResponseEntity<Void> deleteCategory(@RequestParam Long id){
         categoryService.deleteCategory(id);
 
         return ResponseEntity.noContent().build();
