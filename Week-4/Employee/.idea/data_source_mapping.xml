@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourcePerFileMappings">
+    <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/8027400a-4d65-4f75-ab30-a9b8d8498690/console.sql" value="8027400a-4d65-4f75-ab30-a9b8d8498690" />
+    <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/8027400a-4d65-4f75-ab30-a9b8d8498690/console_1.sql" value="8027400a-4d65-4f75-ab30-a9b8d8498690" />
+    <file url="file://$PROJECT_DIR$/Schema.sql" value="537232f7-950e-49ec-85e8-d0ca8ae22f5d" />
+    <file url="file://$PROJECT_DIR$/Seed_data.sql" value="537232f7-950e-49ec-85e8-d0ca8ae22f5d" />
+    <file url="file://$PROJECT_DIR$/queries.sql" value="537232f7-950e-49ec-85e8-d0ca8ae22f5d" />
+    <file url="file://$USER_HOME$/QOUTraningDatabase/Schema.sql" value="537232f7-950e-49ec-85e8-d0ca8ae22f5d" />
+  </component>
+</project>
