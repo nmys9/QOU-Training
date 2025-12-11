@@ -1,5 +1,6 @@
 package com.qoutraining.employeedirectory.service.impl;
 
+import com.qoutraining.employeedirectory.exception.InvalidEndDateException;
 import com.qoutraining.employeedirectory.exception.ResourceNotFoundException;
 import com.qoutraining.employeedirectory.model.dto.employee.EmployeeProjectResponseDTO;
 import com.qoutraining.employeedirectory.model.dto.employee.EmployeeRequestDTO;
@@ -75,14 +76,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     public EmployeeResponseDTO addEmployee(EmployeeRequestDTO dto) {
         Department department=findDepartmentByID(dto.departmentId());
         JobTitle jobTitle=jobTitleService.findJobTitleById(dto.jobTitleId());
-
         Employee newEmployee=employeeMapper.toEntity(dto);
-
         newEmployee.setDepartment(department);
         newEmployee.setJobTitle(jobTitle);
-
         Employee savedEmployee=employeeRepository.save(newEmployee);
-
         return employeeMapper.toResponseDto(savedEmployee);
     }
 
@@ -113,6 +110,12 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Transactional
     public EmployeeResponseDTO terminateEmployee(Long id, LocalDate endDate) {
         Employee employee=findEmployeeByID(id);
+        if(employee.getEndDate() != null){
+            throw new InvalidEndDateException("Employee is already terminated. Cannot modify End Date.");
+        }
+        if(endDate.isBefore(employee.getHireDate()) || endDate.isEqual(employee.getHireDate())){
+            throw new InvalidEndDateException("End Date (" + endDate + ") must be after Hire Date (" + employee.getHireDate() + ")");
+        }
         employee.setEndDate(endDate);
         Employee updateEmployee=employeeRepository.save(employee);
         return employeeMapper.toResponseDto(updateEmployee);

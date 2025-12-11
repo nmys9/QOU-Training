@@ -71,6 +71,4 @@ public class ProjectServiceImpl implements ProjectService {
         Project project=findProjectById(id);
         projectRepository.delete(project);
     }
-
-
 }

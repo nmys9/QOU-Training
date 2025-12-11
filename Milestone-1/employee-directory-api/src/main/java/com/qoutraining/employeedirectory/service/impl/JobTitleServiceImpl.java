@@ -23,7 +23,7 @@ public class JobTitleServiceImpl implements JobTitleService {
     @Override
     public JobTitle findJobTitleById(Long id){
         return jobTitleRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("JobTitle not found with id: "+ id));
+                .orElseThrow(() -> new ResourceNotFoundException("Job Title not found with id: "+ id));
     }
 
     @Override

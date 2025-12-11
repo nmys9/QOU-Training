@@ -46,14 +46,10 @@ public class PayrollServiceImpl implements PayrollService {
     @Transactional
     public PayrollResponseDTO addPayroll(PayrollRequestDTO dto) {
         Employee employee=employeeService.findEmployeeByID(dto.employeeId());
-
         Payroll newPayroll=payrollMapper.toEntity(dto);
         newPayroll.setEmployee(employee);
-
         Payroll savedPayroll=payrollRepository.save(newPayroll);
-
         entityManager.refresh(savedPayroll);
-
         return payrollMapper.toResponseDto(savedPayroll);
     }
 
@@ -61,15 +57,11 @@ public class PayrollServiceImpl implements PayrollService {
     @Transactional
     public PayrollResponseDTO updatePayroll(Long id, PayrollRequestDTO dto) {
         Payroll payroll=findPayrollById(id);
-
         Employee employee=employeeService.findEmployeeByID(dto.employeeId());
-
         payrollMapper.updateEntityFromDto(dto,payroll);
         payroll.setEmployee(employee);
-
         Payroll updatePayroll=payrollRepository.saveAndFlush(payroll);
         entityManager.refresh(updatePayroll);
-
         return payrollMapper.toResponseDto(updatePayroll);
     }
 
@@ -79,5 +71,4 @@ public class PayrollServiceImpl implements PayrollService {
        Payroll payroll=findPayrollById(id);
        payrollRepository.delete(payroll);
     }
-
 }

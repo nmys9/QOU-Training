@@ -1,5 +1,6 @@
 package com.qoutraining.employeedirectory.service.impl;
 
+import com.qoutraining.employeedirectory.exception.EmployeeIsNotManagerException;
 import com.qoutraining.employeedirectory.exception.ResourceNotFoundException;
 import com.qoutraining.employeedirectory.model.dto.department.DepartmentRequestDTO;
 import com.qoutraining.employeedirectory.model.dto.department.DepartmentResponseDTO;
@@ -45,16 +46,12 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Transactional
     public DepartmentResponseDTO addDepartment(DepartmentRequestDTO dto) {
         Employee employee= employeeService.findEmployeeByID(dto.managerId());
-
         if(employee.getJobTitle().getId() != MANAGER_JOB_TITLE_ID){
-            throw new IllegalArgumentException("Employee with id :"+ employee.getId() + " is not a manager");
+            throw new EmployeeIsNotManagerException("Employee with id :"+ employee.getId() + " is not a manager");
         }
-
         Department newDepartment=departmentMapper.toEntity(dto);
         newDepartment.setManager(employee);
-
         Department savedDepartment=departmentRepository.save(newDepartment);
-
         return departmentMapper.toResponseDto(savedDepartment);
     }
 
@@ -62,26 +59,20 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Transactional
     public DepartmentResponseDTO updateDepartment(Long id, DepartmentRequestDTO dto) {
         Department department=findDepartmentByID(id);
-
         Employee employee= employeeService.findEmployeeByID(dto.managerId());
-
         if(employee.getJobTitle().getId() != MANAGER_JOB_TITLE_ID){
-            throw new IllegalArgumentException("Employee with id :"+ employee.getId() + " is not a manager");
+            throw new EmployeeIsNotManagerException("Employee with id :"+ employee.getId() + " is not a manager");
         }
         departmentMapper.updateEntityFromDto(dto, department);
         department.setManager(employee);
-
         Department updateDepartment=departmentRepository.save(department);
-
         return departmentMapper.toResponseDto(updateDepartment);
     }
 
     @Override
     @Transactional
     public void deleteDepartment(Long id) {
-        Department department=departmentRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Department not found with id: "+ id));
-
+        Department department=findDepartmentByID(id);
         departmentRepository.delete(department);
     }
 }
