@@ -40,7 +40,7 @@ public class Project {
     private Status status;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "project", fetch = FetchType.EAGER)
     private List<EmployeeProject> employeeProjects;
 
 }

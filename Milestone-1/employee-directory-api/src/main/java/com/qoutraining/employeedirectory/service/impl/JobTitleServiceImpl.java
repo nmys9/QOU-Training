@@ -1,9 +1,10 @@
 package com.qoutraining.employeedirectory.service.impl;
 
 import com.qoutraining.employeedirectory.exception.ResourceNotFoundException;
-import com.qoutraining.employeedirectory.model.dto.jobTitle.AddJobTitleDTO;
-import com.qoutraining.employeedirectory.model.dto.jobTitle.ReadJobTitleDTO;
+import com.qoutraining.employeedirectory.model.dto.jobTitle.JobTitleRequestDTO;
+import com.qoutraining.employeedirectory.model.dto.jobTitle.JobTitleResponseDTO;
 import com.qoutraining.employeedirectory.model.entity.JobTitle;
+import com.qoutraining.employeedirectory.model.mapper.JobTitleMapper;
 import com.qoutraining.employeedirectory.repository.JobTitleRepository;
 import com.qoutraining.employeedirectory.service.JobTitleService;
 import lombok.RequiredArgsConstructor;
@@ -17,52 +18,46 @@ import java.util.List;
 public class JobTitleServiceImpl implements JobTitleService {
 
     private final JobTitleRepository jobTitleRepository;
+    private final JobTitleMapper jobTitleMapper;
 
     @Override
-    public List<ReadJobTitleDTO> findAll() {
-        return jobTitleRepository.findAll().stream()
-                .map(ReadJobTitleDTO::fromEntity)
-                .toList();
-    }
-
-    @Override
-    @Transactional
-    public ReadJobTitleDTO findById(Long id) {
-        JobTitle jobTitle= jobTitleRepository.findById(id)
+    public JobTitle findJobTitleById(Long id){
+        return jobTitleRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("JobTitle not found with id: "+ id));
-        return ReadJobTitleDTO.fromEntity(jobTitle);
+    }
+
+    @Override
+    public List<JobTitleResponseDTO> findAll() {
+        return jobTitleMapper.toResponseListDto(jobTitleRepository.findAll());
+    }
+
+    @Override
+    public JobTitleResponseDTO findById(Long id) {
+        JobTitle jobTitle=findJobTitleById(id);
+        return jobTitleMapper.toResponseDto(jobTitle);
     }
 
     @Override
     @Transactional
-    public ReadJobTitleDTO addJobTitle(AddJobTitleDTO dto) {
-        JobTitle newJobTitle=JobTitle.builder()
-                .name(dto.name())
-                .description(dto.description())
-                .build();
-        newJobTitle=jobTitleRepository.save(newJobTitle);
-        return ReadJobTitleDTO.fromEntity(newJobTitle);
+    public JobTitleResponseDTO addJobTitle(JobTitleRequestDTO dto) {
+        JobTitle newJobTitle=jobTitleMapper.toEntity(dto);
+        JobTitle savedJobTitle=jobTitleRepository.save(newJobTitle);
+        return jobTitleMapper.toResponseDto(savedJobTitle);
     }
 
     @Override
     @Transactional
-    public ReadJobTitleDTO updateJobTitle(Long id, AddJobTitleDTO dto) {
-        JobTitle jobTitle=jobTitleRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("JobTitle not found with id: "+ id));
-
-        jobTitle.setName(dto.name());
-        jobTitle.setDescription(dto.description());
-
+    public JobTitleResponseDTO updateJobTitle(Long id, JobTitleRequestDTO dto) {
+        JobTitle jobTitle=findJobTitleById(id);
+        jobTitleMapper.updateEntityFromDto(dto, jobTitle);
         JobTitle updateJobTitle=jobTitleRepository.save(jobTitle);
-
-        return ReadJobTitleDTO.fromEntity(updateJobTitle);
+        return jobTitleMapper.toResponseDto(updateJobTitle);
     }
 
     @Override
     @Transactional
     public void deleteJobTitle(Long id) {
-        JobTitle jobTitle=jobTitleRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("JobTitle not found with id: "+ id));
-         jobTitleRepository.delete(jobTitle);
+        JobTitle jobTitle=findJobTitleById(id);
+        jobTitleRepository.delete(jobTitle);
     }
 }

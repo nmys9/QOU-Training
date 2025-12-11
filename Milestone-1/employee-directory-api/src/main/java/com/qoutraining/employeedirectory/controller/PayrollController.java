@@ -1,15 +1,13 @@
 package com.qoutraining.employeedirectory.controller;
 
-import com.qoutraining.employeedirectory.model.dto.payroll.AddPayrollDTO;
-import com.qoutraining.employeedirectory.model.dto.payroll.ReadPayrollDTO;
-import com.qoutraining.employeedirectory.model.dto.payroll.UpdatePayrollDTO;
+import com.qoutraining.employeedirectory.model.dto.payroll.PayrollRequestDTO;
+import com.qoutraining.employeedirectory.model.dto.payroll.PayrollResponseDTO;
 import com.qoutraining.employeedirectory.service.PayrollService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -20,23 +18,23 @@ public class PayrollController {
     private final PayrollService payrollService;
 
     @GetMapping
-    public List<ReadPayrollDTO> getPayroll(){
+    public List<PayrollResponseDTO> getPayroll(){
         return payrollService.findAll();
     }
 
     @GetMapping("/{id}")
-    public ReadPayrollDTO getPayrollById(@PathVariable Long id){
+    public PayrollResponseDTO getPayrollById(@PathVariable Long id){
         return payrollService.findById(id);
     }
 
     @PostMapping
-    public ReadPayrollDTO addPayroll(@Valid @RequestBody AddPayrollDTO dto){
+    public PayrollResponseDTO addPayroll(@Valid @RequestBody PayrollRequestDTO dto){
         return payrollService.addPayroll(dto);
     }
 
     @PutMapping("/{id}")
-    public ReadPayrollDTO updatePayroll(@PathVariable Long id,
-                                          @RequestBody UpdatePayrollDTO update){
+    public PayrollResponseDTO updatePayroll(@PathVariable Long id,
+                                            @Valid @RequestBody PayrollRequestDTO update){
         return payrollService.updatePayroll(id,update);
     }
 

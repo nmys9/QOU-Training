@@ -1,21 +1,20 @@
 package com.qoutraining.employeedirectory.service.impl;
 
 import com.qoutraining.employeedirectory.exception.ResourceNotFoundException;
-import com.qoutraining.employeedirectory.model.dto.payroll.AddPayrollDTO;
-import com.qoutraining.employeedirectory.model.dto.payroll.ReadPayrollDTO;
-import com.qoutraining.employeedirectory.model.dto.payroll.UpdatePayrollDTO;
+import com.qoutraining.employeedirectory.model.dto.payroll.PayrollRequestDTO;
+import com.qoutraining.employeedirectory.model.dto.payroll.PayrollResponseDTO;
 import com.qoutraining.employeedirectory.model.entity.Employee;
 import com.qoutraining.employeedirectory.model.entity.Payroll;
+import com.qoutraining.employeedirectory.model.mapper.PayrollMapper;
 import com.qoutraining.employeedirectory.repository.EmployeeRepository;
 import com.qoutraining.employeedirectory.repository.PayrollRepository;
+import com.qoutraining.employeedirectory.service.EmployeeService;
 import com.qoutraining.employeedirectory.service.PayrollService;
 import jakarta.persistence.EntityManager;
-import jakarta.transaction.TransactionScoped;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -23,67 +22,62 @@ import java.util.List;
 public class PayrollServiceImpl implements PayrollService {
 
     private final PayrollRepository payrollRepository;
-    private final EmployeeRepository employeeRepository;
+    private final EmployeeService employeeService;
     private final EntityManager entityManager;
+    private final PayrollMapper payrollMapper;
+
+    private Payroll findPayrollById(Long id) {
+        return payrollRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Payroll cannot found with id :" + id));
+    }
 
     @Override
-    public List<ReadPayrollDTO> findAll() {
-        return payrollRepository.findAll().stream()
-                .map(ReadPayrollDTO::fromEntity)
-                .toList();
+    public List<PayrollResponseDTO> findAll() {
+        return payrollMapper.toResponseListDto(payrollRepository.findAll());
+    }
+
+    @Override
+    public PayrollResponseDTO findById(Long id) {
+        Payroll payroll=findPayrollById(id);
+        return payrollMapper.toResponseDto(payroll);
     }
 
     @Override
     @Transactional
-    public ReadPayrollDTO findById(Long id) {
-        Payroll payroll=existsPayroll(id);
-        return ReadPayrollDTO.fromEntity(payroll);
+    public PayrollResponseDTO addPayroll(PayrollRequestDTO dto) {
+        Employee employee=employeeService.findEmployeeByID(dto.employeeId());
+
+        Payroll newPayroll=payrollMapper.toEntity(dto);
+        newPayroll.setEmployee(employee);
+
+        Payroll savedPayroll=payrollRepository.save(newPayroll);
+
+        entityManager.refresh(savedPayroll);
+
+        return payrollMapper.toResponseDto(savedPayroll);
     }
 
     @Override
     @Transactional
-    public ReadPayrollDTO addPayroll(AddPayrollDTO dto) {
-        Employee employee=employeeRepository.findById(dto.employeeId())
-                .orElseThrow(() -> new ResourceNotFoundException("Employee not found with id :" + dto.employeeId()));
+    public PayrollResponseDTO updatePayroll(Long id, PayrollRequestDTO dto) {
+        Payroll payroll=findPayrollById(id);
 
-        Payroll newPayroll=Payroll.builder()
-                .employee(employee)
-                .paymentDate(dto.paymentDate())
-                .paidBaseSalary(dto.paidBaseSalary())
-                .bonusAmount(dto.bonusAmount())
-                .deductionAmount(dto.deductionAmount())
-                .build();
+        Employee employee=employeeService.findEmployeeByID(dto.employeeId());
 
-        newPayroll=payrollRepository.save(newPayroll);
-        entityManager.refresh(newPayroll);
+        payrollMapper.updateEntityFromDto(dto,payroll);
+        payroll.setEmployee(employee);
 
-        return ReadPayrollDTO.fromEntity(newPayroll);
-    }
-
-    @Override
-    @Transactional
-    public ReadPayrollDTO updatePayroll(Long id, UpdatePayrollDTO dto) {
-        Payroll payroll=existsPayroll(id);
-
-        payroll.setPaidBaseSalary(dto.paidBaseSalary());
-        payroll.setBonusAmount(dto.bonusAmount());
-        payroll.setDeductionAmount(dto.deductionAmount());
-
-        Payroll updatePayroll=payrollRepository.save(payroll);
+        Payroll updatePayroll=payrollRepository.saveAndFlush(payroll);
         entityManager.refresh(updatePayroll);
 
-        return ReadPayrollDTO.fromEntity(updatePayroll);
+        return payrollMapper.toResponseDto(updatePayroll);
     }
 
     @Override
     @Transactional
     public void deletePayroll(Long id) {
-       Payroll payroll=existsPayroll(id);
+       Payroll payroll=findPayrollById(id);
        payrollRepository.delete(payroll);
     }
 
-    public Payroll existsPayroll(Long id){
-        return payrollRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Payrollcannot found with id :" + id));
-    }
 }

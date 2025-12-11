@@ -1,9 +1,10 @@
 package com.qoutraining.employeedirectory.controller;
 
-import com.qoutraining.employeedirectory.model.dto.project.AddProjectDTO;
-import com.qoutraining.employeedirectory.model.dto.project.ProjectEmployeesDTO;
-import com.qoutraining.employeedirectory.model.dto.project.ReadProjectDTO;
+import com.qoutraining.employeedirectory.model.dto.project.ProjectRequestDTO;
+import com.qoutraining.employeedirectory.model.dto.project.ProjectEmployeesResponseDTO;
+import com.qoutraining.employeedirectory.model.dto.project.ProjectResponseDTO;
 import com.qoutraining.employeedirectory.service.ProjectService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,28 +19,28 @@ public class ProjectController {
     private final ProjectService projectService;
 
     @GetMapping
-    public List<ReadProjectDTO> getProjects(){
+    public List<ProjectResponseDTO> getProjects(){
         return projectService.findAll();
     }
 
     @GetMapping("/{id}")
-    public ReadProjectDTO getProject(@PathVariable Long id){
+    public ProjectResponseDTO getProject(@PathVariable Long id){
         return projectService.findById(id);
     }
 
     @GetMapping("/{id}/employees")
-    public List<ProjectEmployeesDTO> getProjectEmployees(@PathVariable Long id){
+    public List<ProjectEmployeesResponseDTO> getProjectEmployees(@PathVariable Long id){
         return projectService.findEmployeesByIdProject(id);
     }
 
     @PostMapping
-    public ReadProjectDTO addProject(@RequestBody AddProjectDTO project){
+    public ProjectResponseDTO addProject(@Valid @RequestBody ProjectRequestDTO project){
         return projectService.addProject(project);
     }
 
     @PutMapping("/{id}")
-    public ReadProjectDTO updateProject(@PathVariable Long id,
-                                        @RequestBody AddProjectDTO update){
+    public ProjectResponseDTO updateProject(@PathVariable Long id,
+                                            @Valid @RequestBody ProjectRequestDTO update){
         return projectService.updateProject(id,update);
     }
 

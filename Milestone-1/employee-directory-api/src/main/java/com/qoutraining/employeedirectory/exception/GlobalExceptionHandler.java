@@ -1,31 +1,94 @@
 package com.qoutraining.employeedirectory.exception;
 
+import com.qoutraining.employeedirectory.model.dto.APIErrorResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.time.LocalDateTime;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<String> handleResourceNotFoundException(ResourceNotFoundException ex){
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    public ResponseEntity<APIErrorResponse> handleResourceNotFoundException(ResourceNotFoundException ex,
+                                                                            HttpServletRequest request){
+        APIErrorResponse errorResponse= new APIErrorResponse(
+                ex.getMessage(),
+                request.getRequestURI(),
+                HttpStatus.NOT_FOUND.value(),
+                LocalDateTime.now(),
+                null
+        );
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<APIErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex,
+                                                                           HttpServletRequest request){
+        APIErrorResponse errorResponse = new APIErrorResponse(
+                ex.getMessage(),
+                request.getRequestURI(),
+                HttpStatus.BAD_REQUEST.value(),
+                LocalDateTime.now(),
+                null
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<String> handleValidationErrors(MethodArgumentNotValidException ex) {
-        // يسرد جميع الأخطاء الناتجة عن الـ @Valid
-        String error = ex.getBindingResult().getFieldError().getDefaultMessage();
-        return new ResponseEntity<>("Validation Error: " + error, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<APIErrorResponse> handleValidationErrors(MethodArgumentNotValidException ex,
+                                                                   HttpServletRequest request) {
+
+        Map<String,String> errors=new HashMap<>();
+
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName=((FieldError) error).getField();
+            String errorMessage= error.getDefaultMessage();
+            errors.put(fieldName,errorMessage);
+        });
+
+        APIErrorResponse errorResponse= new APIErrorResponse(
+                "Input validation failed. Please review the details.",
+                request.getRequestURI(),
+                HttpStatus.BAD_REQUEST.value(),//400
+                LocalDateTime.now(),
+                errors
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<String> handleJsonReadError(HttpMessageNotReadableException ex) {
-        // ستظهر رسالة الخطأ المتعلقة بالتاريخ أو نوع البيانات هنا
-        String error = "JSON Parse Error: Check your data types or date format (YYYY-MM-DD). Details: " + ex.getMessage();
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<APIErrorResponse> handleJsonReadError(HttpMessageNotReadableException ex,
+                                                      HttpServletRequest request) {
+        APIErrorResponse errorResponse=new APIErrorResponse(
+                "JSON Parse Error: Check your data types or date format (YYYY-MM-DD). Details: " + ex.getMessage(),
+                request.getRequestURI(),
+                HttpStatus.BAD_REQUEST.value(),
+                LocalDateTime.now(),
+                null
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<APIErrorResponse> handleGenericException(Exception ex,
+                                                                   HttpServletRequest request){
+        String genericMessage = "An unexpected error occurred on the server.";
+
+        APIErrorResponse errorResponse = new APIErrorResponse(
+                genericMessage,
+                request.getRequestURI(),
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),//500
+                LocalDateTime.now(),
+                null
+        );
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
 }

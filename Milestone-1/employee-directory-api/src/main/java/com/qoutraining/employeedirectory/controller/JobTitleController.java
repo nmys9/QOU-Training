@@ -1,9 +1,10 @@
 package com.qoutraining.employeedirectory.controller;
 
 
-import com.qoutraining.employeedirectory.model.dto.jobTitle.AddJobTitleDTO;
-import com.qoutraining.employeedirectory.model.dto.jobTitle.ReadJobTitleDTO;
+import com.qoutraining.employeedirectory.model.dto.jobTitle.JobTitleRequestDTO;
+import com.qoutraining.employeedirectory.model.dto.jobTitle.JobTitleResponseDTO;
 import com.qoutraining.employeedirectory.service.JobTitleService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,23 +19,23 @@ public class JobTitleController {
     private final JobTitleService jobTitleService;
 
     @GetMapping
-    public List<ReadJobTitleDTO> JobTitles(){
+    public List<JobTitleResponseDTO> JobTitles(){
         return jobTitleService.findAll();
     }
 
     @GetMapping("/{id}")
-    public ReadJobTitleDTO getJobTitle(@PathVariable Long id){
+    public JobTitleResponseDTO getJobTitle(@PathVariable Long id){
         return jobTitleService.findById(id);
     }
 
     @PostMapping
-    public ReadJobTitleDTO addJobTitle(@RequestBody AddJobTitleDTO dto){
+    public JobTitleResponseDTO addJobTitle(@Valid @RequestBody JobTitleRequestDTO dto){
         return jobTitleService.addJobTitle(dto);
     }
 
     @PutMapping("/{id}")
-    public ReadJobTitleDTO updateJobTitle(@PathVariable Long id,
-                                              @RequestBody AddJobTitleDTO update){
+    public JobTitleResponseDTO updateJobTitle(@PathVariable Long id,
+                                              @Valid @RequestBody JobTitleRequestDTO update){
         return jobTitleService.updateJobTitle(id,update);
     }
 

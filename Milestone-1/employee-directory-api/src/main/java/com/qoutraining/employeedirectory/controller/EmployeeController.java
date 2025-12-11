@@ -1,10 +1,10 @@
 package com.qoutraining.employeedirectory.controller;
 
-import com.qoutraining.employeedirectory.model.dto.employee.EmployeeProjectDTO;
-import com.qoutraining.employeedirectory.model.dto.employee.AddEmployeeDTO;
-import com.qoutraining.employeedirectory.model.dto.employeePhone.EmployeePhoneDTO;
-import com.qoutraining.employeedirectory.model.dto.employee.ReadEmployeeDTO;
-import com.qoutraining.employeedirectory.model.dto.employee.UpdateEmployeeDTO;
+import com.qoutraining.employeedirectory.model.dto.employee.EmployeeProjectResponseDTO;
+import com.qoutraining.employeedirectory.model.dto.employee.EmployeeRequestDTO;
+import com.qoutraining.employeedirectory.model.dto.employeePhone.EmployeePhoneRequestDTO;
+import com.qoutraining.employeedirectory.model.dto.employee.EmployeeResponseDTO;
+import com.qoutraining.employeedirectory.model.dto.employeePhone.EmployeePhoneResponseDTO;
 import com.qoutraining.employeedirectory.model.entity.EmployeePhone;
 import com.qoutraining.employeedirectory.service.EmployeeService;
 import jakarta.validation.Valid;
@@ -24,48 +24,53 @@ public class EmployeeController {
     private final EmployeeService employeeService;
 
     @GetMapping
-    public List<ReadEmployeeDTO> getEmployees(){
+    public List<EmployeeResponseDTO> getEmployees(){
         return employeeService.findAll();
     }
 
     @GetMapping("/{id}")
-    public ReadEmployeeDTO getEmployee(@PathVariable Long id){
-        return employeeService.findByID(id);
+    public EmployeeResponseDTO getEmployee(@PathVariable Long id){
+        return employeeService.findById(id);
     }
 
     @GetMapping("/{id}/phones")
-    public List<EmployeePhone> getEmployeePhones(@PathVariable Long id){
+    public List<EmployeePhoneResponseDTO> getEmployeePhones(@PathVariable Long id){
         return employeeService.findEmployeePhoneById(id);
     }
 
     @GetMapping("/{id}/projects")
-    public List<EmployeeProjectDTO> getEmployeeProject(@PathVariable Long id){
+    public List<EmployeeProjectResponseDTO> getEmployeeProject(@PathVariable Long id){
         return employeeService.findEmployeeProjectsById(id);
     }
 
+
     @PostMapping
-    public ReadEmployeeDTO addEmployee(@Valid @RequestBody AddEmployeeDTO addEmployeeDTO){
-        return employeeService.addEmployee(addEmployeeDTO);
+    public EmployeeResponseDTO addEmployee(@Valid @RequestBody EmployeeRequestDTO employeeRequestDTO){
+        return employeeService.addEmployee(employeeRequestDTO);
     }
 
-    @PostMapping("/{id}/phones")
-    public EmployeePhone addEmployeePhone(@PathVariable Long id,
-                                          @RequestBody EmployeePhoneDTO dto){
-        return employeeService.addEmployeePhone(id,dto);
+    @PostMapping("/phones")
+    public EmployeePhoneResponseDTO addEmployeePhone(@Valid @RequestBody EmployeePhoneRequestDTO dto){
+        return employeeService.addEmployeePhone(dto);
     }
 
     @PutMapping("/{id}")
-    public ReadEmployeeDTO updateEmployee(@PathVariable Long id,
-                                          @RequestBody UpdateEmployeeDTO updateEmployeeDTO){
+    public EmployeeResponseDTO updateEmployee(@PathVariable Long id,
+                                              @Valid @RequestBody EmployeeRequestDTO updateEmployeeDTO){
         return employeeService.updateEmployee(id, updateEmployeeDTO);
     }
 
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> terminateEmployee(@PathVariable Long id){
-        employeeService.terminateEmployee(id, LocalDate.now());
+    @PatchMapping("/{id}")
+    public EmployeeResponseDTO terminateEmployee(@PathVariable Long id,@RequestBody LocalDate date){
+        return employeeService.terminateEmployee(id, date);
+    }
 
-        return ResponseEntity.ok("Employee with ID " + id + " has been terminated (Soft Delete)");
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteEmployee(@PathVariable Long id){
+        employeeService.deleteEmployee(id);
+
+        return ResponseEntity.ok("Employee with ID " + id + " has been deleted.");
     }
 
 }

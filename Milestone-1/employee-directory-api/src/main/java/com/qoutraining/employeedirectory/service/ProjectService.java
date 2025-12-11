@@ -1,16 +1,15 @@
 package com.qoutraining.employeedirectory.service;
 
-import com.qoutraining.employeedirectory.model.dto.employee.EmployeeProjectDTO;
-import com.qoutraining.employeedirectory.model.dto.project.AddProjectDTO;
-import com.qoutraining.employeedirectory.model.dto.project.ProjectEmployeesDTO;
-import com.qoutraining.employeedirectory.model.dto.project.ReadProjectDTO;
+import com.qoutraining.employeedirectory.model.dto.project.ProjectRequestDTO;
+import com.qoutraining.employeedirectory.model.dto.project.ProjectEmployeesResponseDTO;
+import com.qoutraining.employeedirectory.model.dto.project.ProjectResponseDTO;
 import java.util.List;
 
 public interface ProjectService {
-    List<ReadProjectDTO> findAll();
-    ReadProjectDTO findById(Long id);
-    List<ProjectEmployeesDTO> findEmployeesByIdProject(Long id);
-    ReadProjectDTO addProject(AddProjectDTO dto);
-    ReadProjectDTO updateProject(Long id, AddProjectDTO dto);
+    List<ProjectResponseDTO> findAll();
+    ProjectResponseDTO findById(Long id);
+    List<ProjectEmployeesResponseDTO> findEmployeesByIdProject(Long id);
+    ProjectResponseDTO addProject(ProjectRequestDTO dto);
+    ProjectResponseDTO updateProject(Long id, ProjectRequestDTO dto);
     void deleteProject(Long id);
 }

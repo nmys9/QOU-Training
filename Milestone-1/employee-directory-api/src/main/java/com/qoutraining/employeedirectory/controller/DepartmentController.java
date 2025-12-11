@@ -1,8 +1,9 @@
 package com.qoutraining.employeedirectory.controller;
 
-import com.qoutraining.employeedirectory.model.dto.department.AddDepartmentDTO;
-import com.qoutraining.employeedirectory.model.dto.department.ReadDepartmentDTO;
+import com.qoutraining.employeedirectory.model.dto.department.DepartmentRequestDTO;
+import com.qoutraining.employeedirectory.model.dto.department.DepartmentResponseDTO;
 import com.qoutraining.employeedirectory.service.DepartmentService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,23 +18,23 @@ public class DepartmentController {
     private final DepartmentService departmentService;
 
     @GetMapping
-    public List<ReadDepartmentDTO> getDepartments(){
+    public List<DepartmentResponseDTO> getDepartments(){
         return departmentService.findAll();
     }
 
     @GetMapping("/{id}")
-    public ReadDepartmentDTO getDepartment(@PathVariable Long id){
+    public DepartmentResponseDTO getDepartment(@PathVariable Long id){
         return departmentService.findById(id);
     }
 
     @PostMapping
-    public ReadDepartmentDTO addDepartment(@RequestBody AddDepartmentDTO department){
+    public DepartmentResponseDTO addDepartment(@Valid @RequestBody DepartmentRequestDTO department){
         return departmentService.addDepartment(department);
     }
 
     @PutMapping("/{id}")
-    public ReadDepartmentDTO updateDepartment(@PathVariable Long id,
-                                              @RequestBody AddDepartmentDTO update){
+    public DepartmentResponseDTO updateDepartment(@PathVariable Long id,
+                                                  @Valid @RequestBody DepartmentRequestDTO update){
         return departmentService.updateDepartment(id,update);
     }
 

@@ -1,17 +1,20 @@
 package com.qoutraining.employeedirectory.service.impl;
 
 import com.qoutraining.employeedirectory.exception.ResourceNotFoundException;
-import com.qoutraining.employeedirectory.model.dto.employee.EmployeeProjectDTO;
-import com.qoutraining.employeedirectory.model.dto.employee.AddEmployeeDTO;
-import com.qoutraining.employeedirectory.model.dto.employeePhone.EmployeePhoneDTO;
-import com.qoutraining.employeedirectory.model.dto.employee.ReadEmployeeDTO;
-import com.qoutraining.employeedirectory.model.dto.employee.UpdateEmployeeDTO;
+import com.qoutraining.employeedirectory.model.dto.employee.EmployeeProjectResponseDTO;
+import com.qoutraining.employeedirectory.model.dto.employee.EmployeeRequestDTO;
+import com.qoutraining.employeedirectory.model.dto.employeePhone.EmployeePhoneRequestDTO;
+import com.qoutraining.employeedirectory.model.dto.employee.EmployeeResponseDTO;
+import com.qoutraining.employeedirectory.model.dto.employeePhone.EmployeePhoneResponseDTO;
 import com.qoutraining.employeedirectory.model.entity.*;
+import com.qoutraining.employeedirectory.model.mapper.EmployeeMapper;
+import com.qoutraining.employeedirectory.model.mapper.EmployeePhoneMapper;
+import com.qoutraining.employeedirectory.model.mapper.EmployeeProjectMapper;
 import com.qoutraining.employeedirectory.repository.DepartmentRepository;
 import com.qoutraining.employeedirectory.repository.EmployeePhoneRepository;
 import com.qoutraining.employeedirectory.repository.EmployeeRepository;
-import com.qoutraining.employeedirectory.repository.JobTitleRepository;
 import com.qoutraining.employeedirectory.service.EmployeeService;
+import com.qoutraining.employeedirectory.service.JobTitleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
@@ -24,124 +27,101 @@ import java.util.List;
 public class EmployeeServiceImpl implements EmployeeService {
 
     private final EmployeeRepository employeeRepository;
+    private final JobTitleService jobTitleService;
     private final DepartmentRepository departmentRepository;
-    private final JobTitleRepository jobTitleRepository;
     private final EmployeePhoneRepository employeePhoneRepository;
+    private final EmployeeMapper employeeMapper;
+    private final EmployeePhoneMapper employeePhoneMapper;
+    private final EmployeeProjectMapper employeeProjectMapper;
 
-    @Override
-    public List<ReadEmployeeDTO> findAll() {
-        return employeeRepository.findAll().stream()
-                .map(ReadEmployeeDTO::fromEntity)
-                .toList();
-    }
-
-    @Override
-    public ReadEmployeeDTO findByID(Long id) {
-        Employee employee= employeeRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
-        return ReadEmployeeDTO.fromEntity(employee);
-    }
-
-    public Department findDepartmentByID(Long id) {
+    private Department findDepartmentByID(Long id) {
         return departmentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Department not found with id: "+ id));
     }
 
-    public JobTitle findJobTitleById(Long id){
-        return jobTitleRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("JobTitle not found with id: "+ id));
-
+    @Override
+    public Employee findEmployeeByID(Long id) {
+        return employeeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
     }
 
     @Override
-    public List<EmployeePhone> findEmployeePhoneById(Long id) {
-        Employee employee=employeeRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
-
-        return employee.getEmployeePhones();
+    public List<EmployeeResponseDTO> findAll() {
+        return employeeMapper.toResponseListDto(employeeRepository.findAll());
     }
 
     @Override
-    public List<EmployeeProjectDTO> findEmployeeProjectsById(Long id) {
-        Employee employee=employeeRepository.findById(id)
+    public EmployeeResponseDTO findById(Long id) {
+        Employee employee= employeeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
+        return employeeMapper.toResponseDto(employee);
+    }
 
-        return employee.getEmployeeProjects().stream()
-                .map(EmployeeProjectDTO::fromEntity)
-                .toList();
+    @Override
+    public List<EmployeePhoneResponseDTO> findEmployeePhoneById(Long id) {
+        Employee employee=findEmployeeByID(id);
+        return employeePhoneMapper.toRespnseListDto(employee.getEmployeePhones());
+    }
+
+    @Override
+    public List<EmployeeProjectResponseDTO> findEmployeeProjectsById(Long id) {
+        Employee employee=findEmployeeByID(id);
+        List<EmployeeProject> projects=employee.getEmployeeProjects();
+        return employeeProjectMapper.toProjectResponseList(projects);
     }
 
     @Override
     @Transactional
-    public ReadEmployeeDTO addEmployee(AddEmployeeDTO dto) {
+    public EmployeeResponseDTO addEmployee(EmployeeRequestDTO dto) {
         Department department=findDepartmentByID(dto.departmentId());
+        JobTitle jobTitle=jobTitleService.findJobTitleById(dto.jobTitleId());
 
+        Employee newEmployee=employeeMapper.toEntity(dto);
 
-        JobTitle jobTitle=findJobTitleById(dto.jobTitleId());
-        Employee newEmployee= Employee.builder()
-                .firstName(dto.firstName())
-                .lastName(dto.lastName())
-                .email(dto.email())
-                .address(dto.address())
-                .hireDate(dto.hireDate())
-                .department(department)
-                .jobTitle(jobTitle)
-                .build();
+        newEmployee.setDepartment(department);
+        newEmployee.setJobTitle(jobTitle);
 
         Employee savedEmployee=employeeRepository.save(newEmployee);
 
-        return ReadEmployeeDTO.fromEntity(savedEmployee);
+        return employeeMapper.toResponseDto(savedEmployee);
     }
 
     @Override
     @Transactional
-    public EmployeePhone addEmployeePhone(Long id, EmployeePhoneDTO dto) {
-        Employee employee=employeeRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
-
-        EmployeePhone employeePhone=EmployeePhone.builder()
-                .phoneNumber(dto.phoneNumber())
-                .phoneType(dto.phoneType())
-                .employee(employee)
-                .build();
-
-        return employeePhoneRepository.save(employeePhone);
+    public EmployeePhoneResponseDTO addEmployeePhone(EmployeePhoneRequestDTO dto) {
+        Employee employee=findEmployeeByID(dto.employeeId());
+        EmployeePhone employeePhone=employeePhoneMapper.toEntity(dto);
+        employeePhone.setEmployee(employee);
+         EmployeePhone savedEmployeePhone=employeePhoneRepository.save(employeePhone);
+         return employeePhoneMapper.toResponseDto(savedEmployeePhone);
     }
 
     @Override
     @Transactional
-    public ReadEmployeeDTO updateEmployee(Long id, UpdateEmployeeDTO dto) {
-        Employee employee=employeeRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Employee not found wit id :" + id));
-
+    public EmployeeResponseDTO updateEmployee(Long id, EmployeeRequestDTO dto) {
+        Employee employee=findEmployeeByID(id);
         Department department=findDepartmentByID(dto.departmentId());
-        JobTitle jobTitle=findJobTitleById(dto.jobTitleId());
-
-        employee.setFirstName(dto.firstName());
-        employee.setLastName(dto.lastName());
-        employee.setEmail(dto.email());
-        employee.setAddress(dto.address());
+        JobTitle jobTitle=jobTitleService.findJobTitleById(dto.jobTitleId());
+        employeeMapper.updateEntityFromDto(dto,employee);
         employee.setDepartment(department);
         employee.setJobTitle(jobTitle);
-
         Employee updateEmployee= employeeRepository.save(employee);
-        
-        return ReadEmployeeDTO.fromEntity(updateEmployee);
+        return employeeMapper.toResponseDto(updateEmployee);
     }
 
     @Override
     @Transactional
-    public void terminateEmployee(Long id, LocalDate endDate) {
-        Employee employee=employeeRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Employee not found wit id :" + id));
-
+    public EmployeeResponseDTO terminateEmployee(Long id, LocalDate endDate) {
+        Employee employee=findEmployeeByID(id);
         employee.setEndDate(endDate);
-
-        employeeRepository.save(employee);
+        Employee updateEmployee=employeeRepository.save(employee);
+        return employeeMapper.toResponseDto(updateEmployee);
     }
 
-
-
-
-
+    @Override
+    @Transactional
+    public void deleteEmployee(Long id) {
+        Employee employee=findEmployeeByID(id);
+        employeeRepository.delete(employee);
+    }
 }

@@ -1,15 +1,17 @@
 package com.qoutraining.employeedirectory.service;
 
-import com.qoutraining.employeedirectory.model.dto.department.AddDepartmentDTO;
-import com.qoutraining.employeedirectory.model.dto.department.ReadDepartmentDTO;
+import com.qoutraining.employeedirectory.model.dto.department.DepartmentRequestDTO;
+import com.qoutraining.employeedirectory.model.dto.department.DepartmentResponseDTO;
+import com.qoutraining.employeedirectory.model.entity.Department;
 
 import java.util.List;
 
 
 public interface DepartmentService {
-    List<ReadDepartmentDTO> findAll();
-    ReadDepartmentDTO findById(Long id);
-    ReadDepartmentDTO addDepartment(AddDepartmentDTO dto);
-    ReadDepartmentDTO updateDepartment(Long id, AddDepartmentDTO dto);
+    List<DepartmentResponseDTO> findAll();
+    DepartmentResponseDTO findById(Long id);
+    Department findDepartmentByID(Long id);
+    DepartmentResponseDTO addDepartment(DepartmentRequestDTO dto);
+    DepartmentResponseDTO updateDepartment(Long id, DepartmentRequestDTO dto);
     void deleteDepartment(Long id);
 }

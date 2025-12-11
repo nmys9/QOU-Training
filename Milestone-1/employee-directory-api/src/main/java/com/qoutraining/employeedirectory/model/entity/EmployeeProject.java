@@ -17,8 +17,6 @@ import java.time.LocalDate;
 public class EmployeeProject {
 
     @Id
-//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "emp_proj_seq")
-//    @SequenceGenerator(name = "emp_proj_seq", sequenceName = "EMP_PROJ_SEQ",allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
     private Long id;
