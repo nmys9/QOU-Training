@@ -8,7 +8,6 @@ import java.util.List;
 
 @Getter
 @Setter
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -27,7 +26,7 @@ public class JobTitle {
     private String description;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "jobTitle", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "jobTitle")
     private List<Employee> employees;
 
 }

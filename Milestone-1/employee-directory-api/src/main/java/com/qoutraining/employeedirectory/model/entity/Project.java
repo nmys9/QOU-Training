@@ -11,7 +11,6 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -40,7 +39,7 @@ public class Project {
     private Status status;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "project", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "project")
     private List<EmployeeProject> employeeProjects;
 
 }

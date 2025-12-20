@@ -9,12 +9,11 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "EMPLOYEE")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+//@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Employee {
 
     @Id
@@ -57,15 +56,15 @@ public class Employee {
     private JobTitle jobTitle;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "employee")
     private List<EmployeePhone> employeePhones;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "employee" ,fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "employee" )
     private List<EmployeeProject> employeeProjects;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "employee")
     private List<Payroll> payrolls;
 
 }

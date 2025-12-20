@@ -1,14 +1,19 @@
 package com.qoutraining.employeedirectory.service.impl;
 
 import com.qoutraining.employeedirectory.exception.ResourceNotFoundException;
+import com.qoutraining.employeedirectory.model.dto.project.ProjectEmployeesRequestDTO;
 import com.qoutraining.employeedirectory.model.dto.project.ProjectRequestDTO;
 import com.qoutraining.employeedirectory.model.dto.project.ProjectEmployeesResponseDTO;
 import com.qoutraining.employeedirectory.model.dto.project.ProjectResponseDTO;
+import com.qoutraining.employeedirectory.model.entity.Employee;
 import com.qoutraining.employeedirectory.model.entity.EmployeeProject;
 import com.qoutraining.employeedirectory.model.entity.Project;
 import com.qoutraining.employeedirectory.model.mapper.EmployeeProjectMapper;
 import com.qoutraining.employeedirectory.model.mapper.ProjectMapper;
+import com.qoutraining.employeedirectory.repository.EmployeePhoneRepository;
+import com.qoutraining.employeedirectory.repository.EmployeeProjectRepository;
 import com.qoutraining.employeedirectory.repository.ProjectRepository;
+import com.qoutraining.employeedirectory.service.EmployeeService;
 import com.qoutraining.employeedirectory.service.ProjectService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +26,11 @@ import java.util.List;
 public class ProjectServiceImpl implements ProjectService {
 
     private final ProjectRepository projectRepository;
+    private final EmployeeProjectRepository employeeProjectRepository;
+    private final EmployeeService employeeService;
     private final ProjectMapper projectMapper;
     private final EmployeeProjectMapper employeeProjectMapper;
+
 
     @Transactional
     private Project findProjectById(Long id){
@@ -54,6 +62,20 @@ public class ProjectServiceImpl implements ProjectService {
         Project project=projectMapper.toEntity(dto);
         Project savedProject=projectRepository.save(project);
         return projectMapper.toResponseDto(savedProject);
+    }
+
+    @Override
+    public ProjectEmployeesResponseDTO addEmployeeToProject(Long projectId,ProjectEmployeesRequestDTO dto) {
+        Project project=findProjectById(projectId);
+        Employee employee=employeeService.findEmployeeByID(dto.employeeId());
+
+        EmployeeProject employeeProject=employeeProjectMapper.toEntity(dto);
+
+        employeeProject.setEmployee(employee);
+        employeeProject.setProject(project);
+
+        EmployeeProject savedEmployeeProject=employeeProjectRepository.save(employeeProject);
+        return employeeProjectMapper.toEmployeeResponseDto(savedEmployeeProject);
     }
 
     @Override

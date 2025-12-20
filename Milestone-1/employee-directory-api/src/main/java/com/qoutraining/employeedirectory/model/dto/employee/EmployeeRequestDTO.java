@@ -23,7 +23,7 @@ public record EmployeeRequestDTO(
         String address,
 
         @JsonFormat(pattern = "yyyy-MM-dd")
-        @NotBlank(message = "Hire date is required")
+        @NotNull(message = "Hire date is required")
         @PastOrPresent(message = "Hire date cannot be in the future")
         LocalDate hireDate,
 

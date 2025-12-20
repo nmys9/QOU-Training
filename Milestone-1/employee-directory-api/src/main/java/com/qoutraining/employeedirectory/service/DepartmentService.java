@@ -10,7 +10,6 @@ import java.util.List;
 public interface DepartmentService {
     List<DepartmentResponseDTO> findAll();
     DepartmentResponseDTO findById(Long id);
-    Department findDepartmentByID(Long id);
     DepartmentResponseDTO addDepartment(DepartmentRequestDTO dto);
     DepartmentResponseDTO updateDepartment(Long id, DepartmentRequestDTO dto);
     void deleteDepartment(Long id);

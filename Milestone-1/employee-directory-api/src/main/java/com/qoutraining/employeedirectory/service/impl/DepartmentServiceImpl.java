@@ -25,8 +25,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     private final EmployeeService employeeService;
     private final DepartmentMapper departmentMapper;
 
-    @Override
-    public Department findDepartmentByID(Long id) {
+    private Department findDepartmentByID(Long id) {
         return departmentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Department not found with id: "+ id));
     }

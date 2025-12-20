@@ -1,6 +1,6 @@
 package com.qoutraining.employeedirectory.exception;
 
-import com.qoutraining.employeedirectory.model.dto.APIErrorResponse;
+import com.qoutraining.employeedirectory.model.dto.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,9 +18,9 @@ import java.time.LocalDateTime;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<APIErrorResponse> handleResourceNotFoundException(ResourceNotFoundException ex,
-                                                                            HttpServletRequest request){
-        APIErrorResponse errorResponse= new APIErrorResponse(
+    public ResponseEntity<ErrorResponse> handleResourceNotFoundException(ResourceNotFoundException ex,
+                                                                         HttpServletRequest request){
+        ErrorResponse errorResponse= new ErrorResponse(
                 ex.getMessage(),
                 request.getRequestURI(),
                 HttpStatus.NOT_FOUND.value(),//404
@@ -31,9 +31,9 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(InvalidEndDateException.class)
-    public ResponseEntity<APIErrorResponse> handleInvalidEndDateException(InvalidEndDateException ex,
-                                                                           HttpServletRequest request){
-        APIErrorResponse errorResponse = new APIErrorResponse(
+    public ResponseEntity<ErrorResponse> handleInvalidEndDateException(InvalidEndDateException ex,
+                                                                       HttpServletRequest request){
+        ErrorResponse errorResponse = new ErrorResponse(
                 ex.getMessage(),
                 request.getRequestURI(),
                 HttpStatus.BAD_REQUEST.value(),//400
@@ -44,9 +44,9 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(EmployeeIsNotManagerException.class)
-    public ResponseEntity<APIErrorResponse> handleEmployeeIsNotManagerException(EmployeeIsNotManagerException ex,
-                                                                          HttpServletRequest request){
-        APIErrorResponse errorResponse = new APIErrorResponse(
+    public ResponseEntity<ErrorResponse> handleEmployeeIsNotManagerException(EmployeeIsNotManagerException ex,
+                                                                             HttpServletRequest request){
+        ErrorResponse errorResponse = new ErrorResponse(
                 ex.getMessage(),
                 request.getRequestURI(),
                 HttpStatus.BAD_REQUEST.value(),//400
@@ -57,8 +57,8 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<APIErrorResponse> handleValidationErrors(MethodArgumentNotValidException ex,
-                                                                   HttpServletRequest request) {
+    public ResponseEntity<ErrorResponse> handleValidationErrors(MethodArgumentNotValidException ex,
+                                                                HttpServletRequest request) {
 
         Map<String,String> errors=new HashMap<>();
 
@@ -68,7 +68,7 @@ public class GlobalExceptionHandler {
             errors.put(fieldName,errorMessage);
         });
 
-        APIErrorResponse errorResponse= new APIErrorResponse(
+        ErrorResponse errorResponse= new ErrorResponse(
                 "Input validation failed. Please review the details.",
                 request.getRequestURI(),
                 HttpStatus.BAD_REQUEST.value(),//400
@@ -79,10 +79,10 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<APIErrorResponse> handleJsonReadError(HttpMessageNotReadableException ex,
-                                                      HttpServletRequest request) {
-        APIErrorResponse errorResponse=new APIErrorResponse(
-                "JSON Parse Error: Malformed JSON or invalid data type for field 'hireDate'.",
+    public ResponseEntity<ErrorResponse> handleJsonReadError(HttpMessageNotReadableException ex,
+                                                             HttpServletRequest request) {
+        ErrorResponse errorResponse=new ErrorResponse(
+                "Invalid request body or wrong data format",
                 request.getRequestURI(),
                 HttpStatus.BAD_REQUEST.value(),
                 LocalDateTime.now(),
@@ -92,11 +92,11 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<APIErrorResponse> handleGenericException(Exception ex,
-                                                                   HttpServletRequest request){
+    public ResponseEntity<ErrorResponse> handleGenericException(Exception ex,
+                                                                HttpServletRequest request){
         String genericMessage = "An unexpected error occurred on the server.";
 
-        APIErrorResponse errorResponse = new APIErrorResponse(
+        ErrorResponse errorResponse = new ErrorResponse(
                 genericMessage,
                 request.getRequestURI(),
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),//500
