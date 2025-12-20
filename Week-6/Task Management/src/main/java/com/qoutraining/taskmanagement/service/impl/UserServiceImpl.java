@@ -8,6 +8,10 @@ import com.qoutraining.taskmanagement.model.mapper.UserMapper;
 import com.qoutraining.taskmanagement.repository.UserRepository;
 import com.qoutraining.taskmanagement.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,8 +24,9 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
 
     @Override
-    public List<UserResponseDto> findAll() {
-        return userMapper.toResponseList(userRepository.findAll());
+    public Page<UserResponseDto> findAll(int page, int size, String sortBy ) {
+        Pageable pageable= PageRequest.of(page,size, Sort.by(sortBy));
+        return userRepository.findAll(pageable).map(userMapper::toResponseDto);
     }
 
     @Override

@@ -13,12 +13,9 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Entity
 @Table(name = "EMPLOYEE")
-//@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Employee {
 
     @Id
-//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "emp_seq")
-//    @SequenceGenerator(name = "emp_seq",sequenceName = "EMP_SEQ", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "EMPLOYEE_ID")
     private Long id;

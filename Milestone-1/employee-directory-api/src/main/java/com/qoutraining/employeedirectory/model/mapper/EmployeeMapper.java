@@ -24,11 +24,6 @@ public interface EmployeeMapper {
 
     List<EmployeeResponseDTO> toResponseListDto(List<Employee> entities);
 
-    @Mapping(source = "project.id", target = "projectId")
-    @Mapping(source = "project.title", target = "projectTitle")
-    @Mapping(source = "project.description", target = "projectDescription")
-    List<EmployeeProjectResponseDTO> toProjectResponseList(List<EmployeeProject> entities);
-
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "department", ignore = true)
     @Mapping(target = "jobTitle", ignore = true)
