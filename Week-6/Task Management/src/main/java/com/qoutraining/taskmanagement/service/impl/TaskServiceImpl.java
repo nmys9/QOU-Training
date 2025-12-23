@@ -1,6 +1,7 @@
 package com.qoutraining.taskmanagement.service.impl;
 
 import com.qoutraining.taskmanagement.exception.TaskNotFoundException;
+import com.qoutraining.taskmanagement.exception.TaskOwnershipException;
 import com.qoutraining.taskmanagement.exception.UserNotFoundException;
 import com.qoutraining.taskmanagement.model.dto.task.TaskRequestDto;
 import com.qoutraining.taskmanagement.model.dto.task.TaskResponseDto;
@@ -14,11 +15,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class TaskServiceImpl implements TaskService {
 
     private final TaskRepository taskRepository;
@@ -47,6 +50,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @Transactional
     public TaskResponseDto addTask(TaskRequestDto dto) {
         User user=userRepository.findById(dto.userId()).orElseThrow(
                 () -> new UserNotFoundException("User not found with id :"+ dto.userId())
@@ -58,6 +62,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @Transactional
     public TaskResponseDto updateTask(Long id, TaskRequestDto dto) {
         Task task=taskRepository.findById(id).orElseThrow(
                 () -> new TaskNotFoundException("Task not found with id: "+ id)
@@ -66,16 +71,17 @@ public class TaskServiceImpl implements TaskService {
                 () -> new UserNotFoundException("User not found with id :"+ dto.userId())
         );
 
+        //Ensure task's user is not changed
+        if(!task.getUser().getId().equals(user.getId())){
+            throw new TaskOwnershipException("You cannot change the user of this task.");
+        }
         taskMapper.updateEntityFromDto(dto,task);
-
-        task.setUser(user);
-
         Task updateTask=taskRepository.save(task);
-
         return taskMapper.toResponseDto(updateTask);
     }
 
     @Override
+    @Transactional
     public void deleteTask(Long id) {
         Task task=taskRepository.findById(id).orElseThrow(
                 () -> new TaskNotFoundException("Task not found with id: "+ id)
