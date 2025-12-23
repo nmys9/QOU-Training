@@ -110,9 +110,9 @@ class TaskManagementIT {
         mockMvc.perform(get("/api/users/{userId}/tasks",userId)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(2))
-                .andExpect(jsonPath("$[0].title").value("Task 1"))
-                .andExpect(jsonPath("$[1].title").value("Task 2"));
+                .andExpect(jsonPath("$.content.length()").value(2))
+                .andExpect(jsonPath("$.content[0].title").value("Task 1"))
+                .andExpect(jsonPath("$.content[1].title").value("Task 2"));
 
 
     }

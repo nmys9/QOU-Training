@@ -4,6 +4,10 @@ import com.qoutraining.taskmanagement.model.dto.task.TaskRequestDto;
 import com.qoutraining.taskmanagement.model.dto.task.TaskResponseDto;
 import com.qoutraining.taskmanagement.service.TaskService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,9 +23,11 @@ public class TaskConroller {
     private final TaskService taskService;
 
     @GetMapping
-    public ResponseEntity<List<TaskResponseDto>> findAll(){
-        var response= taskService.findAll();
-        return ResponseEntity.ok(response);
+    public ResponseEntity<Page<TaskResponseDto>> findAll(
+            @PageableDefault(size = 10, page = 0, sort = "id", direction = Sort.Direction.ASC) Pageable pageable
+    ){
+
+        return ResponseEntity.ok(taskService.findAll(pageable));
     }
 
     @GetMapping("/{id}")

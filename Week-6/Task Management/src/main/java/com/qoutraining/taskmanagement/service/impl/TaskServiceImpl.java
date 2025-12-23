@@ -11,6 +11,8 @@ import com.qoutraining.taskmanagement.repository.TaskRepository;
 import com.qoutraining.taskmanagement.repository.UserRepository;
 import com.qoutraining.taskmanagement.service.TaskService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,8 +26,8 @@ public class TaskServiceImpl implements TaskService {
     private final TaskMapper taskMapper;
 
     @Override
-    public List<TaskResponseDto> findAll() {
-        return taskMapper.toResponseList(taskRepository.findAll());
+    public Page<TaskResponseDto> findAll(Pageable pageable) {
+        return taskRepository.findAll(pageable).map(taskMapper::toResponseDto);
     }
 
     @Override
@@ -36,13 +38,12 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<TaskResponseDto> findTasksByUserId(Long id) {
+    public Page<TaskResponseDto> findTasksByUserId(Long id, Pageable pageable) {
         User user=userRepository.findById(id).orElseThrow(
                 () -> new UserNotFoundException("User not found with id :"+ id)
         );
 
-        List<Task> tasks=taskRepository.findTasksByUserId(id);
-        return taskMapper.toResponseList(tasks);
+        return taskRepository.findTasksByUserId(id,pageable).map(taskMapper::toResponseDto);
     }
 
     @Override

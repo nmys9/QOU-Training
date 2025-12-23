@@ -17,8 +17,6 @@ public interface UserMapper {
 
     UserResponseDto toResponseDto(User entity);
 
-    List<UserResponseDto> toResponseList(List<User> entities);
-
     @Mapping(target = "id",ignore = true)
     void updateEntityFromDto(UserRequestDto dto, @MappingTarget User entity);
 

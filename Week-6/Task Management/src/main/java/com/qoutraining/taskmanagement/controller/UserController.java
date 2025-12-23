@@ -7,6 +7,9 @@ import com.qoutraining.taskmanagement.service.TaskService;
 import com.qoutraining.taskmanagement.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,11 +25,9 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<Page<UserResponseDto>> findAll(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "id") String sortBy
+            @PageableDefault(size = 10,page = 0,sort = "id" ,direction = Sort.Direction.ASC) Pageable pageable
     ){
-        var response = userService.findAll(page,size,sortBy);
+        var response=userService.findAll(pageable);
         return ResponseEntity.ok(response);
     }
 
@@ -36,8 +37,9 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
     @GetMapping("/{userId}/tasks")
-    public ResponseEntity<List<TaskResponseDto>> findTasksByUserId(@PathVariable Long userId){
-        var response = taskService.findTasksByUserId(userId);
+    public ResponseEntity<Page<TaskResponseDto>> findTasksByUserId(@PathVariable Long userId
+            , @PageableDefault(size = 10, page = 0,sort = "id", direction = Sort.Direction.ASC) Pageable pageable){
+        var response = taskService.findTasksByUserId(userId,pageable);
         return ResponseEntity.ok(response);
     }
 
