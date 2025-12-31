@@ -1,0 +1,69 @@
+package com.qoutraining.employeedirectory.service.impl;
+
+import com.qoutraining.employeedirectory.exception.ResourceNotFoundException;
+import com.qoutraining.employeedirectory.model.dto.jobTitle.JobTitleRequestDTO;
+import com.qoutraining.employeedirectory.model.dto.jobTitle.JobTitleResponseDTO;
+import com.qoutraining.employeedirectory.model.entity.JobTitle;
+import com.qoutraining.employeedirectory.model.mapper.JobTitleMapper;
+import com.qoutraining.employeedirectory.repository.EmployeeRepository;
+import com.qoutraining.employeedirectory.repository.JobTitleRepository;
+import com.qoutraining.employeedirectory.service.JobTitleService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
+public class JobTitleServiceImpl implements JobTitleService {
+
+    private final JobTitleRepository jobTitleRepository;
+    private final JobTitleMapper jobTitleMapper;
+    private final EmployeeRepository employeeRepository;
+
+    @Override
+    public JobTitle findJobTitleById(Long id){
+        return jobTitleRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Job Title not found with id: "+ id));
+    }
+
+    @Override
+    public Page<JobTitleResponseDTO> findAll(Pageable pageable) {
+        return jobTitleRepository.findAll(pageable).map(jobTitleMapper::toResponseDto);
+    }
+
+    @Override
+    public JobTitleResponseDTO findById(Long id) {
+        JobTitle jobTitle=findJobTitleById(id);
+        return jobTitleMapper.toResponseDto(jobTitle);
+    }
+
+    @Override
+    @Transactional
+    public JobTitleResponseDTO addJobTitle(JobTitleRequestDTO dto) {
+        JobTitle newJobTitle=jobTitleMapper.toEntity(dto);
+        JobTitle savedJobTitle=jobTitleRepository.save(newJobTitle);
+        return jobTitleMapper.toResponseDto(savedJobTitle);
+    }
+
+    @Override
+    @Transactional
+    public JobTitleResponseDTO updateJobTitle(Long id, JobTitleRequestDTO dto) {
+        JobTitle jobTitle=findJobTitleById(id);
+        jobTitleMapper.updateEntityFromDto(dto, jobTitle);
+        JobTitle updateJobTitle=jobTitleRepository.save(jobTitle);
+        return jobTitleMapper.toResponseDto(updateJobTitle);
+    }
+
+    @Override
+    @Transactional
+    public void deleteJobTitle(Long id) {
+        employeeRepository.detachEmployeesFromJobTitle(id);
+        JobTitle jobTitle=findJobTitleById(id);
+        jobTitleRepository.delete(jobTitle);
+    }
+}
