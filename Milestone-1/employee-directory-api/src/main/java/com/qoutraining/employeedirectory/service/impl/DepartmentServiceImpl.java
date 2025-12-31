@@ -18,6 +18,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class DepartmentServiceImpl implements DepartmentService {
 
     private static final long MANAGER_JOB_TITLE_ID = 7L;

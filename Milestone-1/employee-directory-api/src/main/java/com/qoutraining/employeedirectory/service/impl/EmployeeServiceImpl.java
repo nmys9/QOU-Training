@@ -1,5 +1,6 @@
 package com.qoutraining.employeedirectory.service.impl;
 
+import com.qoutraining.employeedirectory.exception.DuplicateResourceException;
 import com.qoutraining.employeedirectory.exception.InvalidEndDateException;
 import com.qoutraining.employeedirectory.exception.ResourceNotFoundException;
 import com.qoutraining.employeedirectory.model.dto.employee.EmployeeProjectResponseDTO;
@@ -25,6 +26,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class EmployeeServiceImpl implements EmployeeService {
 
     private final EmployeeRepository employeeRepository;
@@ -74,6 +76,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     @Transactional
     public EmployeeResponseDTO addEmployee(EmployeeRequestDTO dto) {
+        if(employeeRepository.existsByEmail(dto.email())){
+            throw new DuplicateResourceException("Employee with email: " + dto.email() + " already exists");
+        }
         Department department=findDepartmentByID(dto.departmentId());
         JobTitle jobTitle=jobTitleService.findJobTitleById(dto.jobTitleId());
         Employee newEmployee=employeeMapper.toEntity(dto);
@@ -97,6 +102,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Transactional
     public EmployeeResponseDTO updateEmployee(Long id, EmployeeRequestDTO dto) {
         Employee employee=findEmployeeByID(id);
+        if(employeeRepository.existsByEmail(dto.email()) && !employee.getEmail().equals(dto.email())){
+            throw new DuplicateResourceException("User with email: " + dto.email() + " already exists.");
+        }
         Department department=findDepartmentByID(dto.departmentId());
         JobTitle jobTitle=jobTitleService.findJobTitleById(dto.jobTitleId());
         employeeMapper.updateEntityFromDto(dto,employee);

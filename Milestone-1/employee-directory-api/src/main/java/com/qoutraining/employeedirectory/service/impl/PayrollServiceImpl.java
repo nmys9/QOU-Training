@@ -6,12 +6,11 @@ import com.qoutraining.employeedirectory.model.dto.payroll.PayrollResponseDTO;
 import com.qoutraining.employeedirectory.model.entity.Employee;
 import com.qoutraining.employeedirectory.model.entity.Payroll;
 import com.qoutraining.employeedirectory.model.mapper.PayrollMapper;
-import com.qoutraining.employeedirectory.repository.EmployeeRepository;
+import org.springframework.transaction.annotation.Transactional;
 import com.qoutraining.employeedirectory.repository.PayrollRepository;
 import com.qoutraining.employeedirectory.service.EmployeeService;
 import com.qoutraining.employeedirectory.service.PayrollService;
 import jakarta.persistence.EntityManager;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +18,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class PayrollServiceImpl implements PayrollService {
 
     private final PayrollRepository payrollRepository;

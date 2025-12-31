@@ -18,8 +18,6 @@ public interface TaskMapper {
 
     TaskResponseDto toResponseDto(Task entity);
 
-    List<TaskResponseDto> toResponseList(List<Task> entities);
-
     @Mapping(target = "id",ignore = true)
     @Mapping(target = "user",ignore = true)
     void updateEntityFromDto(TaskRequestDto dto, @MappingTarget Task entity);

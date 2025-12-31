@@ -10,19 +10,19 @@ import com.qoutraining.employeedirectory.model.entity.EmployeeProject;
 import com.qoutraining.employeedirectory.model.entity.Project;
 import com.qoutraining.employeedirectory.model.mapper.EmployeeProjectMapper;
 import com.qoutraining.employeedirectory.model.mapper.ProjectMapper;
-import com.qoutraining.employeedirectory.repository.EmployeePhoneRepository;
 import com.qoutraining.employeedirectory.repository.EmployeeProjectRepository;
 import com.qoutraining.employeedirectory.repository.ProjectRepository;
 import com.qoutraining.employeedirectory.service.EmployeeService;
 import com.qoutraining.employeedirectory.service.ProjectService;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ProjectServiceImpl implements ProjectService {
 
     private final ProjectRepository projectRepository;
@@ -32,18 +32,17 @@ public class ProjectServiceImpl implements ProjectService {
     private final EmployeeProjectMapper employeeProjectMapper;
 
 
-    @Transactional
     private Project findProjectById(Long id){
         return projectRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Project cannot found with id :" + id));
     }
+
     @Override
     public List<ProjectResponseDTO> findAll() {
         return projectMapper.toResponseListDto(projectRepository.findAll());
     }
 
     @Override
-    @Transactional
     public ProjectResponseDTO findById(Long id) {
         Project project=findProjectById(id);
         return projectMapper.toResponseDto(project);
@@ -65,6 +64,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
+    @Transactional
     public ProjectEmployeesResponseDTO addEmployeeToProject(Long projectId,ProjectEmployeesRequestDTO dto) {
         Project project=findProjectById(projectId);
         Employee employee=employeeService.findEmployeeByID(dto.employeeId());

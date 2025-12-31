@@ -15,6 +15,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class JobTitleServiceImpl implements JobTitleService {
 
     private final JobTitleRepository jobTitleRepository;
