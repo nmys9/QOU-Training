@@ -23,13 +23,6 @@ public interface EmployeeProjectMapper {
     EmployeeProjectResponseDTO toProjectResponseDto(EmployeeProject entity);
 
 
-    List<EmployeeProjectResponseDTO> toProjectResponseList(List<EmployeeProject> entities);
-
-    @Mapping( target = "employeeName",
-            expression = "java(entity.getEmployee() != null " +
-                    "? entity.getEmployee().getFirstName() + \" \" + entity.getEmployee().getLastName()" +
-                    " : \"No Employee Assigned\")")
+    @Mapping(source = "employee.fullName", target = "employeeName")
     ProjectEmployeesResponseDTO toEmployeeResponseDto(EmployeeProject entity);
-
-    List<ProjectEmployeesResponseDTO> toEmployeeResponseList(List<EmployeeProject> entities);
 }

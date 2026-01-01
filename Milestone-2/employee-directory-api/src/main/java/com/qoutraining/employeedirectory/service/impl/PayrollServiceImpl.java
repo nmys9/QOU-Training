@@ -5,9 +5,13 @@ import com.qoutraining.employeedirectory.model.dto.payroll.PayrollRequestDTO;
 import com.qoutraining.employeedirectory.model.dto.payroll.PayrollResponseDTO;
 import com.qoutraining.employeedirectory.model.entity.Employee;
 import com.qoutraining.employeedirectory.model.entity.Payroll;
+import com.qoutraining.employeedirectory.model.entity.User;
 import com.qoutraining.employeedirectory.model.mapper.PayrollMapper;
+import com.qoutraining.employeedirectory.repository.EmployeeRepository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 import com.qoutraining.employeedirectory.repository.PayrollRepository;
 import com.qoutraining.employeedirectory.service.EmployeeService;
@@ -16,12 +20,15 @@ import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class PayrollServiceImpl implements PayrollService {
 
     private final PayrollRepository payrollRepository;
+    private final EmployeeRepository employeeRepository;
     private final EmployeeService employeeService;
     private final EntityManager entityManager;
     private final PayrollMapper payrollMapper;
@@ -40,6 +47,14 @@ public class PayrollServiceImpl implements PayrollService {
     public PayrollResponseDTO findById(Long id) {
         Payroll payroll=findPayrollById(id);
         return payrollMapper.toResponseDto(payroll);
+    }
+
+    @Override
+    public List<PayrollResponseDTO> getMyPayroll(UserDetails userDetails) {
+        String email=userDetails.getUsername();
+        Employee employee=employeeRepository.findByUserEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Employee not found"));
+        return payrollMapper.toResponseListDto(employee.getPayrolls());
     }
 
     @Override

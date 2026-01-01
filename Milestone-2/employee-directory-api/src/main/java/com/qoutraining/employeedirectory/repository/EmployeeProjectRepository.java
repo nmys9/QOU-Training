@@ -9,7 +9,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface EmployeeProjectRepository extends JpaRepository<EmployeeProject, Long> {
-    Page<EmployeeProject> findEmployeeProjectByEmployee_Id(Long id, Pageable pageable);
+    Page<EmployeeProject> findEmployeeProjectByEmployee_User_Email(String email, Pageable pageable);
+
+    Page<EmployeeProject> findEmployeeProjectByProject_Id (Long id,Pageable pageable);
 
     @Modifying
     @Query("UPDATE EmployeeProject e SET e.employee=null WHERE e.employee.id= :empId")

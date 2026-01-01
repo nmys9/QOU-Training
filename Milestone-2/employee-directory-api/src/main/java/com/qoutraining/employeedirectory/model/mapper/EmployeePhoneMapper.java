@@ -16,9 +16,4 @@ public interface EmployeePhoneMapper {
     EmployeePhone toEntity(EmployeePhoneRequestDTO dto);
 
     EmployeePhoneResponseDTO toResponseDto(EmployeePhone entity);
-
-    List<EmployeePhoneResponseDTO> toRespnseListDto(List<EmployeePhone> entities);
-
-//    @Mapping(target = "id", ignore = true)
-//    void updateEntityFromDto(EmployeePhoneRequestDTO dto, @MappingTarget EmployeePhone entity);
 }

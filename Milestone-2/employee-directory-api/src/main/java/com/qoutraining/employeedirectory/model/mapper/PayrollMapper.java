@@ -26,5 +26,4 @@ public interface PayrollMapper {
     @Mapping(target = "employee", ignore = true)
     @Mapping(target = "netPay", ignore = true)
     void updateEntityFromDto(PayrollRequestDTO dto,@MappingTarget Payroll entity);
-
 }

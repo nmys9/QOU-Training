@@ -16,10 +16,7 @@ public interface DepartmentMapper {
     @Mapping(target = "manager", ignore = true)
     Department toEntity(DepartmentRequestDTO dto);
 
-    @Mapping( target = "managerName",
-            expression = "java(entity.getManager() != null " +
-                    "? entity.getManager().getFirstName() + \" \" + entity.getManager().getLastName()" +
-                    " : \"No Manager Assigned\")")
+    @Mapping(source = "manager.fullName", target = "managerName")
     DepartmentResponseDTO toResponseDto(Department entity);
 
     List<DepartmentResponseDTO> toResponseListDto(List<Department> entities);

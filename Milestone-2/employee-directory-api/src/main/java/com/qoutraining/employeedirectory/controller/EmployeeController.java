@@ -1,11 +1,10 @@
 package com.qoutraining.employeedirectory.controller;
 
 import com.qoutraining.employeedirectory.model.dto.employee.EmployeeProjectResponseDTO;
-import com.qoutraining.employeedirectory.model.dto.employee.EmployeeRequestDTO;
 import com.qoutraining.employeedirectory.model.dto.employeePhone.EmployeePhoneRequestDTO;
 import com.qoutraining.employeedirectory.model.dto.employee.EmployeeResponseDTO;
 import com.qoutraining.employeedirectory.model.dto.employeePhone.EmployeePhoneResponseDTO;
-import com.qoutraining.employeedirectory.model.entity.EmployeePhone;
+import com.qoutraining.employeedirectory.model.dto.employee.UpdateEmployeeDTO;
 import com.qoutraining.employeedirectory.service.EmployeeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -15,77 +14,87 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.List;
-
 
 @RestController
-@RequestMapping("employees")
+@RequestMapping("/employees")
 @RequiredArgsConstructor
 public class EmployeeController {
 
     private final EmployeeService employeeService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
-    public ResponseEntity<Page<EmployeeResponseDTO>> getEmployees(
+    public ResponseEntity<Page<EmployeeResponseDTO>> getAllEmployees(
             @PageableDefault(size = 10, page = 0, sort = "id", direction = Sort.Direction.ASC) Pageable pageable
     ){
         var response= employeeService.findAll(pageable);
         return ResponseEntity.ok(response);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
-    public ResponseEntity<EmployeeResponseDTO> getEmployee(@PathVariable Long id){
+    public ResponseEntity<EmployeeResponseDTO> getEmployeeById(@PathVariable Long id){
         var response= employeeService.findById(id);
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/{id}/phones")
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/me")
+    public ResponseEntity<EmployeeResponseDTO> getMyProfile(
+            @AuthenticationPrincipal UserDetails userDetails){
+        var response=employeeService.getMyProfile(userDetails);
+        return ResponseEntity.ok(response);
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/me/phones")
     public ResponseEntity<Page<EmployeePhoneResponseDTO>> getEmployeePhones(
-            @PathVariable Long id,
+            @AuthenticationPrincipal UserDetails userDetails,
             @PageableDefault(size = 10, page = 0, sort = "id", direction = Sort.Direction.ASC) Pageable pageable){
-        var response= employeeService.findEmployeePhoneById(id,pageable);
+        var response= employeeService.findEmployeePhone(userDetails,pageable);
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/{id}/projects")
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/me/projects")
     public ResponseEntity<Page<EmployeeProjectResponseDTO>> getEmployeeProject(
-            @PathVariable Long id,
+            @AuthenticationPrincipal UserDetails userDetails,
             @PageableDefault(size = 10, page = 0, sort = "id", direction = Sort.Direction.ASC) Pageable pageable){
-        var response= employeeService.findEmployeeProjectsById(id,pageable);
+        var response= employeeService.findEmployeeProjects(userDetails,pageable);
         return ResponseEntity.ok(response);
     }
 
-
-    @PostMapping
-    public ResponseEntity<EmployeeResponseDTO> addEmployee(
-            @Valid @RequestBody EmployeeRequestDTO employeeRequestDTO){
-        var response=employeeService.addEmployee(employeeRequestDTO);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
-    }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/phones")
     public ResponseEntity<EmployeePhoneResponseDTO> addEmployeePhone(@Valid @RequestBody EmployeePhoneRequestDTO dto){
         var response= employeeService.addEmployeePhone(dto);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<EmployeeResponseDTO> updateEmployee(@PathVariable Long id,
-                                              @Valid @RequestBody EmployeeRequestDTO updateEmployeeDTO){
-        var response = employeeService.updateEmployee(id, updateEmployeeDTO);
+    @PreAuthorize("hasRole('USER')")
+    @PutMapping("/me")
+    public ResponseEntity<EmployeeResponseDTO> updateEmployee(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @Valid @RequestBody UpdateEmployeeDTO update){
+        var response = employeeService.updateEmployee(userDetails, update);
         return ResponseEntity.ok(response);
     }
 
 
-    @PatchMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @PatchMapping("/terminate/{id}")
     public ResponseEntity<EmployeeResponseDTO> terminateEmployee(@PathVariable Long id,@RequestBody LocalDate date){
         var response = employeeService.terminateEmployee(id, date);
         return ResponseEntity.ok(response);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteEmployee(@PathVariable Long id){
         employeeService.deleteEmployee(id);

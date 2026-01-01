@@ -29,7 +29,7 @@ public class RefreshTokenService {
                 () -> new UserNotFoundException("user not found"));
 
         refreshTokenRepository.deleteByUser(user);
-
+        refreshTokenRepository.flush();
         RefreshToken token = new RefreshToken();
         token.setUser(user);
         token.setToken(UUID.randomUUID().toString());

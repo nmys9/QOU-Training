@@ -1,13 +1,12 @@
 package com.qoutraining.employeedirectory.service.impl;
 
-import com.qoutraining.employeedirectory.exception.DuplicateResourceException;
 import com.qoutraining.employeedirectory.exception.InvalidEndDateException;
 import com.qoutraining.employeedirectory.exception.ResourceNotFoundException;
 import com.qoutraining.employeedirectory.model.dto.employee.EmployeeProjectResponseDTO;
-import com.qoutraining.employeedirectory.model.dto.employee.EmployeeRequestDTO;
 import com.qoutraining.employeedirectory.model.dto.employeePhone.EmployeePhoneRequestDTO;
 import com.qoutraining.employeedirectory.model.dto.employee.EmployeeResponseDTO;
 import com.qoutraining.employeedirectory.model.dto.employeePhone.EmployeePhoneResponseDTO;
+import com.qoutraining.employeedirectory.model.dto.employee.UpdateEmployeeDTO;
 import com.qoutraining.employeedirectory.model.entity.*;
 import com.qoutraining.employeedirectory.model.mapper.EmployeeMapper;
 import com.qoutraining.employeedirectory.model.mapper.EmployeePhoneMapper;
@@ -18,6 +17,8 @@ import com.qoutraining.employeedirectory.service.JobTitleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -62,31 +63,26 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public Page<EmployeePhoneResponseDTO> findEmployeePhoneById(Long id,Pageable pageable) {
-        return employeePhoneRepository.findEmployeePhoneByEmployee_Id(id,pageable)
+    public EmployeeResponseDTO getMyProfile(UserDetails userDetails) {
+        String email=userDetails.getUsername();
+        Employee employee=employeeRepository.findByUserEmail(email).orElseThrow(() -> new UsernameNotFoundException("Employee not found"));
+        return employeeMapper.toResponseDto(employee);
+    }
+
+    @Override
+    public Page<EmployeePhoneResponseDTO> findEmployeePhone(UserDetails userDetails,Pageable pageable) {
+        String email= userDetails.getUsername();
+        return employeePhoneRepository.findEmployeePhoneByEmployee_User_Email(email,pageable)
                 .map(employeePhoneMapper::toResponseDto);
     }
 
     @Override
-    public Page<EmployeeProjectResponseDTO> findEmployeeProjectsById(Long id,Pageable pageable) {
-        return employeeProjectRepository.findEmployeeProjectByEmployee_Id(id,pageable)
+    public Page<EmployeeProjectResponseDTO> findEmployeeProjects(UserDetails userDetails,Pageable pageable) {
+        String email= userDetails.getUsername();
+        return employeeProjectRepository.findEmployeeProjectByEmployee_User_Email(email,pageable)
                 .map(employeeProjectMapper::toProjectResponseDto);
     }
 
-    @Override
-    @Transactional
-    public EmployeeResponseDTO addEmployee(EmployeeRequestDTO dto) {
-        if(employeeRepository.existsByEmail(dto.email())){
-            throw new DuplicateResourceException("Employee with email: " + dto.email() + " already exists");
-        }
-        Department department=findDepartmentByID(dto.departmentId());
-        JobTitle jobTitle=jobTitleService.findJobTitleById(dto.jobTitleId());
-        Employee newEmployee=employeeMapper.toEntity(dto);
-        newEmployee.setDepartment(department);
-        newEmployee.setJobTitle(jobTitle);
-        Employee savedEmployee=employeeRepository.save(newEmployee);
-        return employeeMapper.toResponseDto(savedEmployee);
-    }
 
     @Override
     @Transactional
@@ -100,14 +96,14 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     @Transactional
-    public EmployeeResponseDTO updateEmployee(Long id, EmployeeRequestDTO dto) {
-        Employee employee=findEmployeeByID(id);
-        if(employeeRepository.existsByEmail(dto.email()) && !employee.getEmail().equals(dto.email())){
-            throw new DuplicateResourceException("User with email: " + dto.email() + " already exists.");
-        }
-        Department department=findDepartmentByID(dto.departmentId());
-        JobTitle jobTitle=jobTitleService.findJobTitleById(dto.jobTitleId());
-        employeeMapper.updateEntityFromDto(dto,employee);
+    public EmployeeResponseDTO updateEmployee(UserDetails userDetails, UpdateEmployeeDTO update) {
+        String email= userDetails.getUsername();
+        Employee employee=employeeRepository.findByUserEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Employee not found."));
+
+        Department department=findDepartmentByID(update.departmentId());
+        JobTitle jobTitle=jobTitleService.findJobTitleById(update.jobTitleId());
+        employeeMapper.updateEntityFromDto(update,employee);
         employee.setDepartment(department);
         employee.setJobTitle(jobTitle);
         Employee updateEmployee= employeeRepository.save(employee);

@@ -1,4 +1,4 @@
-package com.qoutraining.employeedirectory.model.dto;
+package com.qoutraining.employeedirectory.exception;
 
 import java.time.LocalDateTime;
 import java.util.Map;

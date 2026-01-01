@@ -12,7 +12,7 @@ import java.util.List;
 public interface ProjectService {
     Page<ProjectResponseDTO> findAll(Pageable pageable);
     ProjectResponseDTO findById(Long id);
-//    List<ProjectEmployeesResponseDTO> findEmployeesByIdProject(Long id);
+    Page<ProjectEmployeesResponseDTO> findEmployeesByIdProject(Long projectId,Pageable pageable);
     ProjectResponseDTO addProject(ProjectRequestDTO dto);
     ProjectEmployeesResponseDTO addEmployeeToProject(Long projectId,ProjectEmployeesRequestDTO dto);
     ProjectResponseDTO updateProject(Long id, ProjectRequestDTO dto);

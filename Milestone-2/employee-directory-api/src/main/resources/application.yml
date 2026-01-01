@@ -1,6 +1,6 @@
 server:
   servlet:
-    context-path: /api/
+    context-path: /api
 
 spring:
   application:
@@ -21,3 +21,13 @@ spring:
         use_sql_comments: true
         format_sql: true
         dialect: org.hibernate.dialect.OracleDialect
+
+  security:
+    user:
+      name: disabled
+      password: disabled
+
+jwt:
+  secret: ${SECRET}
+  expiration: 3600000
+  refreshExpirationMs: 8640000

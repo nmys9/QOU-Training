@@ -18,8 +18,6 @@ public interface JobTitleMapper {
 
     JobTitleResponseDTO toResponseDto(JobTitle entity);
 
-    List<JobTitleResponseDTO> toResponseListDto(List<JobTitle> entities);
-
     @Mapping(target = "id", ignore = true)
     void updateEntityFromDto(JobTitleRequestDTO dto, @MappingTarget JobTitle entity);
 }

@@ -50,6 +50,12 @@ public class ProjectServiceImpl implements ProjectService {
         return projectMapper.toResponseDto(project);
     }
 
+    @Override
+    public Page<ProjectEmployeesResponseDTO> findEmployeesByIdProject(Long projectId, Pageable pageable) {
+        return employeeProjectRepository.findEmployeeProjectByProject_Id(projectId,pageable)
+                .map(employeeProjectMapper::toEmployeeResponseDto);
+    }
+
 //    @Override
 //    public List<ProjectEmployeesResponseDTO> findEmployeesByIdProject(Long id) {
 //        Project project=findProjectById(id);

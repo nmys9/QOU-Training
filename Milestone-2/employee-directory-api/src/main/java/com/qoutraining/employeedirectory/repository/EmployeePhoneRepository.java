@@ -12,6 +12,8 @@ import org.springframework.data.repository.query.Param;
 public interface EmployeePhoneRepository extends JpaRepository<EmployeePhone, Long> {
     Page<EmployeePhone> findEmployeePhoneByEmployee_Id (Long id, Pageable pageable);
 
+    Page<EmployeePhone> findEmployeePhoneByEmployee_User_Email (String email, Pageable pageable);
+
     @Modifying
     @Query("DELETE EmployeePhone e WHERE e.employee.id= :id")
     void deleteEmployeePhoneByEmployeeId (@Param("id") Long id);

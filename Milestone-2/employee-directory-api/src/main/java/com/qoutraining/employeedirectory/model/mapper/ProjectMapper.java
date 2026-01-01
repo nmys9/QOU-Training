@@ -17,8 +17,6 @@ public interface ProjectMapper {
 
     ProjectResponseDTO toResponseDto(Project entity);
 
-    List<ProjectResponseDTO> toResponseListDto(List<Project> entities);
-
     @Mapping(target = "id", ignore = true)
     void updateEntityFromDto(ProjectRequestDTO dto,@MappingTarget Project entity);
 
