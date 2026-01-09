@@ -83,7 +83,6 @@ public class PayrollServiceImpl implements PayrollService {
     @Override
     @Transactional
     public void deletePayroll(Long id) {
-
        Payroll payroll=findPayrollById(id);
        payrollRepository.delete(payroll);
     }

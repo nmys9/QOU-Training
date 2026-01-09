@@ -6,13 +6,8 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
 public record DepartmentRequestDTO(
-
         @NotBlank(message = "Department name is required")
         @Size(min = 3, max = 50, message = "Department name must be between 2 and 50 characters.")
-        String name,
-
-        @NotNull(message = "Manager Id is required")
-        @Positive(message = "Manager ID must be a positive number.")
-        Long managerId
+        String name
 ) {
 }

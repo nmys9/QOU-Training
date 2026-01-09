@@ -22,20 +22,14 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 
 @RestController
-@RequestMapping("/employees")
+@RequestMapping("/api/employees")
 @RequiredArgsConstructor
 public class EmployeeController {
 
     private final EmployeeService employeeService;
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping
-    public ResponseEntity<Page<EmployeeResponseDTO>> getAllEmployees(
-            @PageableDefault(size = 10, page = 0, sort = "id", direction = Sort.Direction.ASC) Pageable pageable
-    ){
-        var response= employeeService.findAll(pageable);
-        return ResponseEntity.ok(response);
-    }
+
+
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")

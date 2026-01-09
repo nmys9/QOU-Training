@@ -17,13 +17,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/departments")
+@RequestMapping("/api/departments")
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMIN')")
 public class DepartmentController {
 
     private final DepartmentService departmentService;
 
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<Page<DepartmentResponseDTO>> findAllDepartments(
             @PageableDefault(size = 10, page = 0, sort = "id", direction = Sort.Direction.ASC) Pageable pageable
@@ -32,14 +32,12 @@ public class DepartmentController {
         return ResponseEntity.ok(response);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<DepartmentResponseDTO> getDepartmentById(@PathVariable Long id){
         var response= departmentService.findById(id);
         return ResponseEntity.ok(response);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<DepartmentResponseDTO> addDepartment(
             @Valid @RequestBody DepartmentRequestDTO department){
@@ -47,7 +45,6 @@ public class DepartmentController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<DepartmentResponseDTO> updateDepartment(@PathVariable Long id,
                                                   @Valid @RequestBody DepartmentRequestDTO update){
@@ -55,7 +52,6 @@ public class DepartmentController {
         return ResponseEntity.ok(response);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteDepartment(@PathVariable Long id){
         departmentService.deleteDepartment(id);

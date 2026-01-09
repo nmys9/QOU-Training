@@ -6,6 +6,8 @@ import com.qoutraining.employeedirectory.repository.RefreshTokenRepository;
 import com.qoutraining.employeedirectory.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,10 +40,10 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     @Transactional
     public RefreshToken validateRefreshToken(String token) {
         RefreshToken refreshToken=refreshTokenRepository.findByToken(token)
-                .orElseThrow(() -> new RuntimeException("Invalid refresh token"));
+                .orElseThrow(() -> new AuthenticationCredentialsNotFoundException("Invalid refresh token"));
         if(refreshToken.getExpiryDate().isBefore(Instant.now())){
             refreshTokenRepository.delete(refreshToken);
-            throw new RuntimeException("Refresh token was expired. Please make a new sign in request");
+            throw new CredentialsExpiredException("Refresh token was expired. Please make a new sign in request");
         }
         return refreshToken;
     }

@@ -12,13 +12,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
@@ -48,4 +45,23 @@ public class AuthController {
         authService.logoutUser(userDetails);
         return ResponseEntity.noContent().build();
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/{userId}/roles/{roleName}")
+    public ResponseEntity<Void> assignRoleToUser(
+            @PathVariable Long userId,
+            @PathVariable String roleName){
+        authService.assignRoleToUser(userId,roleName);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/{userId}/roles/{roleName}")
+    public ResponseEntity<Void> removeRoleFromUser(
+            @PathVariable Long userId,
+            @PathVariable String roleName){
+        authService.removeRoleFromUser(userId,roleName);
+        return ResponseEntity.noContent().build();
+    }
+
 }

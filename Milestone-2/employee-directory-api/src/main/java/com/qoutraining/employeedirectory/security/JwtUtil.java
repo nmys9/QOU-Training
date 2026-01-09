@@ -1,12 +1,15 @@
 package com.qoutraining.employeedirectory.security;
 
-import com.qoutraining.employeedirectory.model.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.io.Decoders;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import java.security.Key;
 import java.util.Date;
 
 @Component
@@ -17,28 +20,47 @@ public class JwtUtil {
     @Value("${jwt.expiration}")
     private Long expiration;
 
-    public String generateToken(User user){
+    public String generateToken(UserDetails userDetails){
+        var authentication=userDetails.getAuthorities()
+                .stream().map(GrantedAuthority::getAuthority)
+                .toList();
+
         return Jwts.builder()
-                .setSubject(user.getEmail())
-                .claim("role",user.getRole())
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis()+expiration))
-                .signWith(Keys.hmacShaKeyFor(secret.getBytes()))
+                .setSubject(userDetails.getUsername())
+                .claim("authorities",authentication)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
+                .signWith(getSignInKey())
                 .compact();
     }
 
-    public String extractEmail(String token){
+    public boolean isTokenValid(String token, UserDetails userDetails){
+        String username= extractUsername(token);
+        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    }
+
+    public boolean isTokenExpired(String token){
+        return extractExpiration(token).before(new Date());
+    }
+
+    public String extractUsername(String token){
         return getClaims(token).getSubject();
     }
-    public String extractRole(String token){
-        return getClaims(token).get("role",String.class);
+
+    public Date extractExpiration(String token){
+        return getClaims(token).getExpiration();
     }
 
     private Claims getClaims(String token){
-        return Jwts.parser()
-                .setSigningKey(secret.getBytes())
+        return Jwts.parserBuilder()
+                .setSigningKey(getSignInKey())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
+    }
+
+    private Key getSignInKey(){
+        byte[] keyBytes= Decoders.BASE64.decode(secret);
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 }

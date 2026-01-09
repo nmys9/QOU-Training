@@ -12,5 +12,6 @@ public interface AuthService {
     AuthResponse login(LoginDTO request);
     AuthResponse refreshAccessToken(RefreshRequest request);
     void logoutUser(UserDetails userDetails);
-
+    void assignRoleToUser(Long userId,String roleName);
+    void removeRoleFromUser(Long userId,String roleName);
 }

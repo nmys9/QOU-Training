@@ -4,6 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum PhoneType {
-    Work,
-    Mobile
+    WORK,
+    MOBILE
 }

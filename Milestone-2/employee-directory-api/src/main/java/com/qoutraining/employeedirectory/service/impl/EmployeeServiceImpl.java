@@ -47,7 +47,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public Employee findEmployeeByID(Long id) {
         return employeeRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Employee not found with id: " + id));
     }
 
     @Override
@@ -100,12 +100,15 @@ public class EmployeeServiceImpl implements EmployeeService {
         String email= userDetails.getUsername();
         Employee employee=employeeRepository.findByUserEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Employee not found."));
-
-        Department department=findDepartmentByID(update.departmentId());
-        JobTitle jobTitle=jobTitleService.findJobTitleById(update.jobTitleId());
+        if(!(update.departmentId()==null)){
+            Department department=findDepartmentByID(update.departmentId());
+            employee.setDepartment(department);
+        }
+        if (!(update.jobTitleId() == null)) {
+            JobTitle jobTitle=jobTitleService.findJobTitleById(update.jobTitleId());
+            employee.setJobTitle(jobTitle);
+        }
         employeeMapper.updateEntityFromDto(update,employee);
-        employee.setDepartment(department);
-        employee.setJobTitle(jobTitle);
         Employee updateEmployee= employeeRepository.save(employee);
         return employeeMapper.toResponseDto(updateEmployee);
     }

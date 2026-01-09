@@ -1,0 +1,17 @@
+[
+  {
+    "id": 10,
+    "name": "Pizza slice",
+    "icon": "🍕"
+  },
+  {
+    "id": 20,
+    "name": "Ice cream",
+    "icon": "🍨"
+  },
+  {
+    "id": 30,
+    "name": "Cheese",
+    "icon": "🧀"
+  }
+]

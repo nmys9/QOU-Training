@@ -13,16 +13,11 @@ import java.util.List;
 public interface DepartmentMapper {
 
     @Mapping(target = "id",ignore = true)
-    @Mapping(target = "manager", ignore = true)
     Department toEntity(DepartmentRequestDTO dto);
 
-    @Mapping(source = "manager.fullName", target = "managerName")
     DepartmentResponseDTO toResponseDto(Department entity);
 
-    List<DepartmentResponseDTO> toResponseListDto(List<Department> entities);
-
     @Mapping(target = "id",ignore = true)
-    @Mapping(target = "manager", ignore = true)
     void updateEntityFromDto(DepartmentRequestDTO dto, @MappingTarget Department entity);
 
 }

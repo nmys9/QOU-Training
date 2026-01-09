@@ -20,7 +20,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/payroll")
+@RequestMapping("/api/payroll")
 public class PayrollController {
 
     private final PayrollService payrollService;

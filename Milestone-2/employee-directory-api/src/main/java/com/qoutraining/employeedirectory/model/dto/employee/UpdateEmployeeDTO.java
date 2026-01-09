@@ -19,11 +19,9 @@ public record UpdateEmployeeDTO(
         @PastOrPresent(message = "Hire date cannot be in the future")
         LocalDate hireDate,
 
-        @NotNull(message = "Department ID is required")
         @Positive(message = "Department ID must be a positive number.")
         Long departmentId,
 
-        @NotNull(message = "Job Title ID is required")
         @Positive(message = "Job Title ID must be a positive number.")
         Long jobTitleId
 ) {
