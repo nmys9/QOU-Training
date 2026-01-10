@@ -1,16 +1,12 @@
 package com.qoutraining.employeedirectory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.qoutraining.employeedirectory.config.TestAuditConfig;
 import com.qoutraining.employeedirectory.model.dto.user.RegistrationDTO;
 import com.qoutraining.employeedirectory.repository.UserRepository;
-import com.qoutraining.employeedirectory.security.JwtFilter;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
