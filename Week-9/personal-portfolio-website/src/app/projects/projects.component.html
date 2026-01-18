@@ -1,0 +1,13 @@
+<div class="projects-header">
+  <h1>My Projects</h1>
+
+  <p>A collection of full-stack and mobile projects where I turn complex requirements
+   into functional, high-quality software solutions.</p>
+</div>
+<div class="projects-grid">
+  @for(project of myProjects; track project.id){
+    <app-project-card [project]="project" />
+  }
+</div>
+
+
